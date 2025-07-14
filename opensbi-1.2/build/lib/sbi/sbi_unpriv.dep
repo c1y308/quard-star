@@ -1,0 +1,11 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_unpriv.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_unpriv.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_hart.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_trap.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_unpriv.h

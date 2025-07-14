@@ -1,0 +1,20 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/fdt/fdt_domain.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/fdt/fdt_domain.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/fdt.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_domain.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_hartmask.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitmap.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_domain.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_helper.h

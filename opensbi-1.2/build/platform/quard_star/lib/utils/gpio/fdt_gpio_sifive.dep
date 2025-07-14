@@ -1,0 +1,16 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_sifive.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/gpio/fdt_gpio_sifive.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_helper.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/gpio/fdt_gpio.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/gpio/gpio.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_list.h

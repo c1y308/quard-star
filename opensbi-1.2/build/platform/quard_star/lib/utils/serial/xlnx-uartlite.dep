@@ -1,0 +1,8 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/serial/xlnx-uartlite.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/serial/xlnx-uartlite.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_console.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/serial/xlnx_uartlite.h

@@ -1,0 +1,13 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_irqchip.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_irqchip.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_irqchip.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_platform.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_version.h

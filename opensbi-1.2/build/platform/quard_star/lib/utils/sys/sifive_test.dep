@@ -1,0 +1,10 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/sys/sifive_test.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/sys/sifive_test.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_system.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_list.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/sys/sifive_test.h

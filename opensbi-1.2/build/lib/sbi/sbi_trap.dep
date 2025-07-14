@@ -1,0 +1,21 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_trap.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_trap.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_console.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_list.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_hart.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_illegal_insn.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ipi.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_irqchip.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_misaligned_ldst.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_pmu.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_timer.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_trap.h

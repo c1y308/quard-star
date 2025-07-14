@@ -1,0 +1,7 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/reset/fdt_reset_thead_asm.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/reset/fdt_reset_thead_asm.S \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/reset/fdt_reset_thead.h

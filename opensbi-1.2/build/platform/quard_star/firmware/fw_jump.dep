@@ -1,0 +1,10 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/firmware/fw_jump.o: /home/a/hiriscv/quard-star/opensbi-1.2/firmware/fw_jump.S \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/firmware/fw_base.S \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_elf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_platform.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_trap.h

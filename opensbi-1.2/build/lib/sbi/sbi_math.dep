@@ -1,0 +1,2 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_math.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_math.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h

@@ -1,0 +1,2 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_hfence.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_hfence.S \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h

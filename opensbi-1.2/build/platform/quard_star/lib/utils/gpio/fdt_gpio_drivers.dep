@@ -1,0 +1,4 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.c: /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/gpio/fdt_gpio_drivers.carray /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.c
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.c: /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/gpio/fdt_gpio_drivers.carray /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/gpio/fdt_gpio_drivers.c

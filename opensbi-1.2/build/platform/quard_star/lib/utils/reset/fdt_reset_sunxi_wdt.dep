@@ -1,0 +1,21 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/reset/fdt_reset_sunxi_wdt.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/reset/fdt_reset_sunxi_wdt.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/fdt.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_system.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_list.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_helper.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/reset/fdt_reset.h

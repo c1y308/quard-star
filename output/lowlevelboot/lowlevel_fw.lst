@@ -1,0 +1,86 @@
+
+/home/a/hiriscv/quard-star/output/lowlevelboot/lowlevel_fw.elf：     文件格式 elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000020000000 <_start>:
+    20000000:	20200513          	li	a0,514
+    20000004:	0552                	sll	a0,a0,0x14
+    20000006:	6585                	lui	a1,0x1
+    20000008:	8005859b          	addw	a1,a1,-2048 # 800 <_start-0x1ffff800>
+    2000000c:	05d2                	sll	a1,a1,0x14
+    2000000e:	6605                	lui	a2,0x1
+    20000010:	8026061b          	addw	a2,a2,-2046 # 802 <_start-0x1ffff7fe>
+    20000014:	0652                	sll	a2,a2,0x14
+    20000016:	00c5fa63          	bgeu	a1,a2,2000002a <_start+0x2a>
+    2000001a:	00052283          	lw	t0,0(a0)
+    2000001e:	0055a023          	sw	t0,0(a1)
+    20000022:	0511                	add	a0,a0,4
+    20000024:	0591                	add	a1,a1,4
+    20000026:	fec5eae3          	bltu	a1,a2,2000001a <_start+0x1a>
+    2000002a:	6509                	lui	a0,0x2
+    2000002c:	2521                	addw	a0,a0,8 # 2008 <_start-0x1fffdff8>
+    2000002e:	0542                	sll	a0,a0,0x10
+    20000030:	6585                	lui	a1,0x1
+    20000032:	8225859b          	addw	a1,a1,-2014 # 822 <_start-0x1ffff7de>
+    20000036:	05d2                	sll	a1,a1,0x14
+    20000038:	6621                	lui	a2,0x8
+    2000003a:	2286061b          	addw	a2,a2,552 # 8228 <_start-0x1fff7dd8>
+    2000003e:	0642                	sll	a2,a2,0x10
+    20000040:	00c5fa63          	bgeu	a1,a2,20000054 <_start+0x54>
+    20000044:	00052283          	lw	t0,0(a0)
+    20000048:	0055a023          	sw	t0,0(a1)
+    2000004c:	0511                	add	a0,a0,4
+    2000004e:	0591                	add	a1,a1,4
+    20000050:	fec5eae3          	bltu	a1,a2,20000044 <_start+0x44>
+    20000054:	20400513          	li	a0,516
+    20000058:	0552                	sll	a0,a0,0x14
+    2000005a:	6585                	lui	a1,0x1
+    2000005c:	b005859b          	addw	a1,a1,-1280 # b00 <_start-0x1ffff500>
+    20000060:	05d2                	sll	a1,a1,0x14
+    20000062:	6605                	lui	a2,0x1
+    20000064:	b046061b          	addw	a2,a2,-1276 # b04 <_start-0x1ffff4fc>
+    20000068:	0652                	sll	a2,a2,0x14
+    2000006a:	00c5fa63          	bgeu	a1,a2,2000007e <_start+0x7e>
+    2000006e:	00052283          	lw	t0,0(a0)
+    20000072:	0055a023          	sw	t0,0(a1)
+    20000076:	0511                	add	a0,a0,4
+    20000078:	0591                	add	a1,a1,4
+    2000007a:	fec5eae3          	bltu	a1,a2,2000006e <_start+0x6e>
+    2000007e:	20800513          	li	a0,520
+    20000082:	0552                	sll	a0,a0,0x14
+    20000084:	6585                	lui	a1,0x1
+    20000086:	8025859b          	addw	a1,a1,-2046 # 802 <_start-0x1ffff7fe>
+    2000008a:	05d2                	sll	a1,a1,0x14
+    2000008c:	6605                	lui	a2,0x1
+    2000008e:	8066061b          	addw	a2,a2,-2042 # 806 <_start-0x1ffff7fa>
+    20000092:	0652                	sll	a2,a2,0x14
+    20000094:	00c5fa63          	bgeu	a1,a2,200000a8 <_start+0xa8>
+    20000098:	00052283          	lw	t0,0(a0)
+    2000009c:	0055a023          	sw	t0,0(a1)
+    200000a0:	0511                	add	a0,a0,4
+    200000a2:	0591                	add	a1,a1,4
+    200000a4:	fec5eae3          	bltu	a1,a2,20000098 <_start+0x98>
+    200000a8:	f1402573          	csrr	a0,mhartid
+    200000ac:	4281                	li	t0,0
+    200000ae:	00550e63          	beq	a0,t0,200000ca <_no_wait>
+    200000b2:	6341                	lui	t1,0x10
+    200000b4:	337d                	addw	t1,t1,-1 # ffff <_start-0x1fff0001>
+    200000b6:	6385                	lui	t2,0x1
+    200000b8:	0001                	nop
+    200000ba:	137d                	add	t1,t1,-1
+    200000bc:	fe031ee3          	bnez	t1,200000b8 <_start+0xb8>
+    200000c0:	6341                	lui	t1,0x10
+    200000c2:	337d                	addw	t1,t1,-1 # ffff <_start-0x1fff0001>
+    200000c4:	13fd                	add	t2,t2,-1 # fff <_start-0x1ffff001>
+    200000c6:	fe0399e3          	bnez	t2,200000b8 <_start+0xb8>
+
+00000000200000ca <_no_wait>:
+    200000ca:	6585                	lui	a1,0x1
+    200000cc:	8225859b          	addw	a1,a1,-2014 # 822 <_start-0x1ffff7de>
+    200000d0:	05d2                	sll	a1,a1,0x14
+    200000d2:	6285                	lui	t0,0x1
+    200000d4:	8002829b          	addw	t0,t0,-2048 # 800 <_start-0x1ffff800>
+    200000d8:	02d2                	sll	t0,t0,0x14
+    200000da:	8282                	jr	t0

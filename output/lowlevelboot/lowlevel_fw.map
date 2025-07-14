@@ -1,0 +1,32 @@
+
+舍弃的输入节
+
+ .data          0x0000000000000000        0x0 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+ .bss           0x0000000000000000        0x0 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+
+内存配置
+
+名称           来源             长度             属性
+flash            0x0000000020000000 0x0000000000080000 axrl!w
+*default*        0x0000000000000000 0xffffffffffffffff
+
+链结器命令稿和内存映射
+
+LOAD /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/libgcc.a
+START GROUP
+LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/../../../../riscv64-unknown-elf/lib/libc.a
+LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/../../../../riscv64-unknown-elf/lib/libgloss.a
+END GROUP
+LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/libgcc.a
+
+.text           0x0000000020000000       0xdc
+ *(.text)
+ .text          0x0000000020000000       0xdc /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+                0x0000000020000000                _start
+OUTPUT(/home/a/hiriscv/quard-star/output/lowlevelboot/lowlevel_fw.elf elf64-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x55
+ .riscv.attributes
+                0x0000000000000000       0x55 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o

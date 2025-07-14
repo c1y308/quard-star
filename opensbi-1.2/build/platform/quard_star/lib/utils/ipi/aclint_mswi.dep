@@ -1,0 +1,19 @@
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/aclint_mswi.o: \
+ /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/ipi/aclint_mswi.c \
+ /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_atomic.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_domain.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_hartmask.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitmap.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ipi.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_timer.h \
+ /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/ipi/aclint_mswi.h
