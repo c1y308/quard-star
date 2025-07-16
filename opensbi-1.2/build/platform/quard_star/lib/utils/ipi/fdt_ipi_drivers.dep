@@ -2,3 +2,5 @@
 /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.c
 /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.c: /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/ipi/fdt_ipi_drivers.carray /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
 /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.c
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.c: /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/ipi/fdt_ipi_drivers.carray /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
+/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_drivers.c

@@ -1,8 +1,8 @@
 
 舍弃的输入节
 
- .data          0x0000000000000000        0x0 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
- .bss           0x0000000000000000        0x0 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+ .data          0x0000000000000000        0x0 /home/a/quard-star/output/lowlevelboot/start.o
+ .bss           0x0000000000000000        0x0 /home/a/quard-star/output/lowlevelboot/start.o
 
 内存配置
 
@@ -12,7 +12,7 @@ flash            0x0000000020000000 0x0000000000080000 axrl!w
 
 链结器命令稿和内存映射
 
-LOAD /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+LOAD /home/a/quard-star/output/lowlevelboot/start.o
 LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/libgcc.a
 START GROUP
 LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/../../../../riscv64-unknown-elf/lib/libc.a
@@ -20,13 +20,13 @@ LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/../../../
 END GROUP
 LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/libgcc.a
 
-.text           0x0000000020000000       0xdc
+.text           0x0000000020000000       0xd2
  *(.text)
- .text          0x0000000020000000       0xdc /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+ .text          0x0000000020000000       0xd2 /home/a/quard-star/output/lowlevelboot/start.o
                 0x0000000020000000                _start
-OUTPUT(/home/a/hiriscv/quard-star/output/lowlevelboot/lowlevel_fw.elf elf64-littleriscv)
+OUTPUT(/home/a/quard-star/output/lowlevelboot/lowlevel_fw.elf elf64-littleriscv)
 
 .riscv.attributes
                 0x0000000000000000       0x55
  .riscv.attributes
-                0x0000000000000000       0x55 /home/a/hiriscv/quard-star/output/lowlevelboot/start.o
+                0x0000000000000000       0x55 /home/a/quard-star/output/lowlevelboot/start.o
