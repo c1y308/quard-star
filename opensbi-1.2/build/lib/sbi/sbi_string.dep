@@ -1,4 +1,4 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_string.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_string.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_string.o: /home/a/quard-star/opensbi-1.2/lib/sbi/sbi_string.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h

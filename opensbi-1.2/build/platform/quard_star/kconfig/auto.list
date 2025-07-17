@@ -1,4 +1,4 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/Kconfig
+/home/a/quard-star/opensbi-1.2/Kconfig
 platform/quard_star/Kconfig
 lib/sbi/Kconfig
 lib/utils/Kconfig

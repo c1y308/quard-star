@@ -1,3 +1,2 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/riscv_hardfp.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/riscv_hardfp.S \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/riscv_hardfp.o: /home/a/quard-star/opensbi-1.2/lib/sbi/riscv_hardfp.S \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h

@@ -1,5 +1,5 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_bitmap.o: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_bitmap.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitmap.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_bitmap.o: /home/a/quard-star/opensbi-1.2/lib/sbi/sbi_bitmap.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_bitmap.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_bitops.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h

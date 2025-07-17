@@ -1,6 +1,5 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/riscv_locks.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/riscv_locks.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_locks.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/riscv_locks.o: /home/a/quard-star/opensbi-1.2/lib/sbi/riscv_locks.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_locks.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h

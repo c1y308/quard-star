@@ -1,8 +1,8 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/serial/litex-uart.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/serial/litex-uart.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_console.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/serial/litex-uart.h
+/home/a/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/serial/litex-uart.o: \
+ /home/a/quard-star/opensbi-1.2/lib/utils/serial/litex-uart.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_console.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi_utils/serial/litex-uart.h

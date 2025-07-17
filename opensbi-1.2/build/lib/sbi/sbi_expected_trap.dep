@@ -1,7 +1,7 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_expected_trap.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_expected_trap.S \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_trap.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_expected_trap.o: \
+ /home/a/quard-star/opensbi-1.2/lib/sbi/sbi_expected_trap.S \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_trap.h

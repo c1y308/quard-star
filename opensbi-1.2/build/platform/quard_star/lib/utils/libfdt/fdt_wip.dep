@@ -1,10 +1,9 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/libfdt/fdt_wip.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/fdt_wip.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/fdt.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_internal.h
+/home/a/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/libfdt/fdt_wip.o: /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/fdt_wip.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_string.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/fdt.h \
+ /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt.h \
+ /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_env.h \
+ /home/a/quard-star/opensbi-1.2/lib/utils/libfdt/libfdt_internal.h

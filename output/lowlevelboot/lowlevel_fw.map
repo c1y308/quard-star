@@ -20,9 +20,9 @@ LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/../../../
 END GROUP
 LOAD /home/a/riscvtool/riscv/bin/../lib/gcc/riscv64-unknown-elf/12.2.0/libgcc.a
 
-.text           0x0000000020000000       0xd2
+.text           0x0000000020000000       0x88
  *(.text)
- .text          0x0000000020000000       0xd2 /home/a/quard-star/output/lowlevelboot/start.o
+ .text          0x0000000020000000       0x88 /home/a/quard-star/output/lowlevelboot/start.o
                 0x0000000020000000                _start
 OUTPUT(/home/a/quard-star/output/lowlevelboot/lowlevel_fw.elf elf64-littleriscv)
 

@@ -4,3 +4,5 @@
 /home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.c
 /home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.c: /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_ecall_exts.carray /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
 /home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.o: /home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.c
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.c: /home/a/quard-star/opensbi-1.2/lib/sbi/sbi_ecall_exts.carray /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/.config
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.o: /home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_exts.c
