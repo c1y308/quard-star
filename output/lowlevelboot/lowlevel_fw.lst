@@ -1,5 +1,5 @@
 
-/home/a/hiriscv/quard-star/output/lowlevelboot/lowlevel_fw.elf：     文件格式 elf64-littleriscv
+/home/a/quard-star/output/lowlevelboot/lowlevel_fw.elf：     文件格式 elf64-littleriscv
 
 
 Disassembly of section .text:

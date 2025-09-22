@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "os.h": "c",
+        "address.h": "c"
+    }
+}

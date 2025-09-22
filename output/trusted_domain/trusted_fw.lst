@@ -1,5 +1,5 @@
 
-/home/a/hiriscv/quard-star/output/trusted_domain/trusted_fw.elf：     文件格式 elf64-littleriscv
+/home/a/quard-star/output/trusted_domain/trusted_fw.elf：     文件格式 elf64-littleriscv
 
 
 Disassembly of section .text:
