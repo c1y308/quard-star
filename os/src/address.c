@@ -271,7 +271,7 @@ void indexes(VirtPageNum vpn, size_t* result)
 
 
 
-PageTableEntry* find_pte_create(PageTable* pt,VirtPageNum vpn)
+PageTableEntry* find_pte_create(PageTable *pt,VirtPageNum vpn)
 {
     
     // 拿到虚拟页号的三级索引，保存到idx数组中
@@ -283,7 +283,7 @@ PageTableEntry* find_pte_create(PageTable* pt,VirtPageNum vpn)
     for (int i = 0; i < 3; i++) 
     {
         //拿到具体的页表项
-        PageTableEntry* pte =  &get_pte_array(ppn)[idx[i]];
+        PageTableEntry *pte =  &get_pte_array(ppn)[idx[i]];
             if (i == 2) {
                 return pte;
             }
@@ -351,9 +351,6 @@ void PageTable_map(PageTable* pt,VirtAddr va, PhysAddr pa, u64 size ,uint8_t pte
         vpn.value+=1;
         ppn.value+=1;
     }
-
-
-
 }
 
 /* 取消映射的函数先不管 */
