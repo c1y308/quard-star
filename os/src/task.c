@@ -1,6 +1,4 @@
-#include <timeros/os.h>
-#include <timeros/stdio.h>
-
+#include "timeros/task.h"
 #define USER_STACK_SIZE (4096 * 2)
 #define KERNEL_STACK_SIZE (4096 * 2)
 
@@ -33,6 +31,27 @@ struct TaskContext tcx_init(reg_t kstack_ptr) {
     task_ctx.s11 = 0;
 
     return task_ctx;
+}
+
+
+/* 在内核的虚拟地址空间中每个应用程序映射内核栈,内核空间以及进行了映射 */
+void proc_mapstacks(PageTable* kpgtbl)
+{
+  struct TaskControlBlock *p;
+  
+  for(p = tasks; p < &tasks[MAX_TASKS]; p++) {
+    // 分配一个空闲物理页
+    char *pa = (char*) phys_addr_from_phys_page_num(kalloc()).value;
+    if(pa == 0)
+      panic("kalloc");
+    // 计算得到此应用程序在内核虚拟地址空间中的地址
+    u64 va = KSTACK((int) (p - tasks));
+    // 只映射一页，有一页作为保护页，栈溢出会触发异常
+    PageTable_map(kpgtbl, virt_addr_from_size_t(va + PAGE_SIZE), phys_addr_from_size_t((u64)pa), \
+                  PAGE_SIZE, PTE_R | PTE_W);
+    // 将此应用程序内核栈的虚拟地址记录在TCB中 
+    p->kstack = va + 2 * PAGE_SIZE;
+  }
 }
 
 

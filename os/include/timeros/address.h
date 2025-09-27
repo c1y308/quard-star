@@ -2,21 +2,18 @@
 #define TOS_ADDRESS_H
 
 #include <timeros/os.h>
-#include <timeros/stack.h>
-#include <timeros/string.h>
-#include <timeros/assert.h>
 
 // Sv39的最大地址空间 512G
 #define MAXVA (1L << (9 + 9 + 9 + 12 - 1))
 
-//跳板页开始位置
-#define TRAMPOLINE (MAXVA - PGSIZE)
-
-//计算应用内核栈的地址，每个应用的内核栈下都有一个无效的守卫页
-#define KSTACK(p) (TRAMPOLINE - ((p)+1)* 2*PGSIZE)
-
 #define PAGE_SIZE 0x1000      // 4kb  一页的大小
 #define PAGE_SIZE_BITS   0xc  // 12   页内偏移地址长度
+
+//跳板页开始位置
+#define TRAMPOLINE (MAXVA - PAGE_SIZE)
+
+//计算应用内核栈的地址，每个应用的内核栈下都有一个无效的守卫页
+#define KSTACK(p) (TRAMPOLINE - ((p)+1)* 2*PAGE_SIZE)
 
 #define PA_WIDTH_SV39 56      //物理地址长度
 #define VA_WIDTH_SV39 39      //虚拟地址长度
@@ -46,7 +43,11 @@ typedef struct {
     uint64_t value;
 } VirtPageNum;
 
-
+/* 定义页表 */
+typedef struct {
+    PhysPageNum root_ppn; //根节点
+    //Stack frames;         //页帧
+}PageTable;
 
 /* 定义页表项 */
 typedef struct  
@@ -63,12 +64,6 @@ typedef struct
 #define PTE_G (1 << 5)   //全局映射
 #define PTE_A (1 << 6)   //访问标志位
 #define PTE_D (1 << 7)   //脏位
-
-/* 定义页表 */
-typedef struct {
-    PhysPageNum root_ppn; //根节点
-    //Stack frames;         //页帧
-}PageTable;
 
 
 // 
@@ -90,4 +85,10 @@ typedef struct {
     u8 map_perm;
 
 }MapArea;
+
+void frame_alloctor_init();
+void kvminit();
+void kvminithart();
+PhysPageNum kalloc(void);
+PhysAddr phys_addr_from_phys_page_num(PhysPageNum ppn);
 #endif

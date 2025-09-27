@@ -249,6 +249,11 @@ void frame_alloctor_init()
 }
 
 
+PhysPageNum kalloc(void)
+{
+    PhysPageNum frame =  StackFrameAllocator_alloc(&FrameAllocatorImpl);
+    return frame;
+}
 
 
 /* 拿到虚拟页号的三级索引，按照从高到低的顺序返回 */
@@ -266,9 +271,6 @@ void indexes(VirtPageNum vpn, size_t* result)
       //  printk("result:%d\n",result[i]);
     }
 }
-
-
-
 
 
 PageTableEntry* find_pte_create(PageTable *pt,VirtPageNum vpn)
@@ -362,7 +364,7 @@ void PageTable_unmap(PageTable* pt, VirtPageNum vpn)
 }
 
 extern char etext[];
-
+extern char trampoline[];
 PageTable kvmmake(void)
 {
     PageTable pt;
@@ -379,6 +381,13 @@ PageTable kvmmake(void)
     PageTable_map(&pt,virt_addr_from_size_t((u64)etext),phys_addr_from_size_t((u64)etext ), \
                     PHYSTOP - (u64)etext , PTE_R | PTE_W ) ;
     printk("finish kernel data and physical RAM map!\n");
+    // map kernel trampoline
+    PageTable_map(&pt,virt_addr_from_size_t(TRAMPOLINE),phys_addr_from_size_t((u64)trampoline ), \
+                    PAGE_SIZE, PTE_R | PTE_X ) ;
+    printk("finish TRAMPOLINE page map!\n");
+    // map app`s kernel stack
+    proc_mapstacks(&pt);
+    printk("finish kernel stack map!\n");
     return pt;
 }
 

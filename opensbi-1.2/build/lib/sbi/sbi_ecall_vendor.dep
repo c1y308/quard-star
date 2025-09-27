@@ -1,15 +1,15 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_vendor.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/sbi/sbi_ecall_vendor.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_list.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_platform.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_version.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_trap.h
+/home/a/quard-star/opensbi-1.2/build/lib/sbi/sbi_ecall_vendor.o: \
+ /home/a/quard-star/opensbi-1.2/lib/sbi/sbi_ecall_vendor.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_ecall.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_list.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_ecall_interface.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_error.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_platform.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_version.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_trap.h

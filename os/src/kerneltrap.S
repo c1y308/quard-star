@@ -1,12 +1,10 @@
-
+.section .text.trampoline
 .globl __alltraps
 .align 3
 __alltraps:
-    # 从sscratch获取S模式下的SP，把U模式下的SP保存到sscratch寄存器中
+    # 从sscratch获取此应用程序存储trapcontext页的基地址，把U模式下的SP保存到sscratch寄存器中
     csrrw sp, sscratch, sp
-    # now sp->kernel stack, sscratch->user stack
-    # allocate a TrapContext on kernel stack
-    addi sp, sp, -34*8
+    # now sp->user stack`trapcontext address, sscratch->user stack
     # save general-purpose registers
     sd x1, 1*8(sp)
     # skip sp(x2), we will save it later
@@ -47,26 +45,34 @@ __alltraps:
     csrr t1, sepc
     sd t0, 32*8(sp)
     sd t1, 33*8(sp)
-    # read user stack from sscratch and save it on the kernel stack
+    # read user stack from sscratch and save it on the trapcontext
     csrr t2, sscratch
     sd t2, 2*8(sp)
-    # set input argument of trap_handler(cx: &mut TrapContext)
-    mv a0, sp
-    call trap_handler
+    # 加载内核根页表的基地址进satp寄存器
+    ld t0, 34*8(sp)
+    # 加载内核虚拟地址空间中trap_handler的基地址进t1寄存器
+    ld t1, 36*8(sp)
+    # 把此app的内核栈的sp加载进sp寄存器
+    ld sp, 35*8(sp)
+
+    csrw satp, t0
+    sfence.vma
+    jr t1
 
 
 .globl __restore
 .align 3
 __restore:
-
-    # now sp->kernel stack(after allocated), sscratch->user stack
-    # restore sstatus/sepc
+    # a0:trapcontext in user space; a1: user space token
+    # switch to user space
+    csrw satp, a1
+    sfence.vma
+    csrw sscratch, a0
+    mv sp, a0 
     ld t0, 32*8(sp)
     ld t1, 33*8(sp)
-    ld t2, 2*8(sp)
     csrw sstatus, t0
     csrw sepc, t1
-    csrw sscratch, t2
     # restore general-purpuse registers except sp/tp
     ld x1, 1*8(sp)
     ld x3, 3*8(sp)
@@ -98,13 +104,7 @@ __restore:
     ld x29, 29*8(sp)
     ld x30, 30*8(sp)
     ld x31, 31*8(sp)
-
-    # release TrapContext on kernel stack
-    addi sp, sp, 34*8
-    # now sp->kernel stack, sscratch->user stack
-    csrrw sp, sscratch, sp
+    # back to user stack
+    ld sp, 2*8(sp)
 
     sret
-
-
-

@@ -9,9 +9,15 @@ SECTIONS
 {
     skernel = .;   /* 定义内核起始内存地址 */
 	.text : {
+		*(.text.entry)
+		. = ALIGN(4K);
+		trampoline = .;
+		*(.text.trampoline);
+		. = ALIGN(4K);
+		_strampoline = .;
 		*(.text .text.*)
-	. = ALIGN(0x1000);
-    PROVIDE(etext = .);
+	    . = ALIGN(0x1000);
+        PROVIDE(etext = .);
 	} >ram
 
 	.rodata : {

@@ -3,12 +3,18 @@
 
 
 #include <stdarg.h>
-#include "types.h"
-#include "context.h"
-#include "riscv.h"
-#include "task.h"
-#include "stdio.h"
-#include "syscall.h"
+#include <timeros/types.h>
+#include <timeros/address.h>  // 将 address.h 移到 task.h 之前
+#include <timeros/assert.h>
+#include <timeros/context.h>
+#include <timeros/riscv.h>
+#include <timeros/sbi.h>
+#include <timeros/stack.h>
+#include <timeros/stdio.h>
+#include <timeros/string.h>
+#include <timeros/syscall.h>
+#include <timeros/task.h>     // 现在 task.h 可以访问 PageTable 了
+
 
 /* trap.c */
 extern void trap_init();

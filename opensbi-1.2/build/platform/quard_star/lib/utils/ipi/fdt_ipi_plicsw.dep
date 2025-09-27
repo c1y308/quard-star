@@ -1,13 +1,13 @@
-/home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_plicsw.o: \
- /home/a/hiriscv/quard-star/opensbi-1.2/lib/utils/ipi/fdt_ipi_plicsw.c \
- /home/a/hiriscv/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_helper.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/ipi/fdt_ipi.h \
- /home/a/hiriscv/quard-star/opensbi-1.2/include/sbi_utils/ipi/andes_plicsw.h
+/home/a/quard-star/opensbi-1.2/build/platform/quard_star/lib/utils/ipi/fdt_ipi_plicsw.o: \
+ /home/a/quard-star/opensbi-1.2/lib/utils/ipi/fdt_ipi_plicsw.c \
+ /home/a/quard-star/opensbi-1.2/build/platform/quard_star/kconfig/autoconf.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_io.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_barrier.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_types.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi_utils/fdt/fdt_helper.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_scratch.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_asm.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/riscv_encoding.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi/sbi_const.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi_utils/ipi/fdt_ipi.h \
+ /home/a/quard-star/opensbi-1.2/include/sbi_utils/ipi/andes_plicsw.h

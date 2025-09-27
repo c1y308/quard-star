@@ -1,8 +1,4 @@
 #include <timeros/os.h>
-#include <timeros/assert.h>
-extern void frame_alloctor_init();
-extern void kvminit();
-extern void kvminithart();
 void os_main()
 {
    printk("hello timer os!\n");
