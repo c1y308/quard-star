@@ -9,7 +9,12 @@ INCLUDE:=-I../include
 LIB = ../lib
 
 write: write.c $(LIB)/*.c
-	${CC} ${CFLAGS} $(INCLUDE) -T user.ld -o bin/write.bin $^
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld -Wl,-Map=write.map -o bin/write $^
 
-time: time.c 
-	${CC} ${CFLAGS} $(INCLUDE) -T user.ld -o bin/time.bin $^
+time: time.c $(LIB)/*.c
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld -Wl,-Map=time.map -o bin/time $^
+
+objdump_time:
+	${OBJDUMP} -d bin/time > time.txt
+objdump_write:
+	${OBJDUMP} -d bin/write > write.txt

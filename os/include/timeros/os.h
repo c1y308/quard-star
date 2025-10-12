@@ -4,25 +4,28 @@
 
 #include <stdarg.h>
 #include <timeros/types.h>
-#include <timeros/address.h>  // 将 address.h 移到 task.h 之前
+#include <timeros/address.h>
 #include <timeros/assert.h>
 #include <timeros/context.h>
+#include <timeros/loader.h>
+#include <timeros/memory.h>
 #include <timeros/riscv.h>
 #include <timeros/sbi.h>
 #include <timeros/stack.h>
 #include <timeros/stdio.h>
 #include <timeros/string.h>
 #include <timeros/syscall.h>
-#include <timeros/task.h>     // 现在 task.h 可以访问 PageTable 了
-
+#include <timeros/task.h>
 
 /* trap.c */
 extern void trap_init();
-
-
+extern void trap_handler();
+extern void trap_return();
+extern void set_kernel_trap_entry();
 /* kerneltrap.S*/
 extern void __alltraps(void);
 extern void __restore(TrapContext *next);
+
 
 
 /* switch.S */
@@ -30,7 +33,6 @@ extern void __switch(TaskContext *current_task_cx_ptr,TaskContext* next_task_cx_
 
 /* task.c */
 extern void schedule();
-extern void task_create(void (*task_entry)(void));
 extern void run_first_task();
 
 /* app.c */
