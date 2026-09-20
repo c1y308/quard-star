@@ -5,11 +5,11 @@ if [ ! -d "$SHELL_FOLDER/output" ]; then
 mkdir $SHELL_FOLDER/output
 fi  
 
-cd qemu-8.0.2
+cd $SHELL_FOLDER/qemu-11.1.1
 if [ ! -d "$SHELL_FOLDER/output/qemu" ]; then  
-./configure --prefix=$SHELL_FOLDER/output/qemu  --target-list=riscv64-softmmu --enable-gtk  --enable-virtfs --disable-gio
+./configure --prefix=$SHELL_FOLDER/output/qemu --target-list=riscv64-softmmu --enable-gtk --enable-vte --disable-gio --disable-docs
 fi  
-make -j16$PROCESSORS
+make -j$(nproc)
 make install
 
 
