@@ -2,6 +2,10 @@
 #define TOS_TASK_H__
 
 #include <timeros/os.h>
+
+/* 最大任务数, 由 task.c 移至此处, 便于 loader.c 等模块共享 */
+#define MAX_TASKS 10
+
 typedef enum TaskState
 {
 	UnInit, // 未初始化

@@ -34,7 +34,8 @@ SRCS_C = \
 INCLUDE:=-I./include
 SRC:=./src
 LIB:=./lib
-# 将源文件替换为 .o 文件
+
+# 将源文件替换为 .o 文件结尾的文件名
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 

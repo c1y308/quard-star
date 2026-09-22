@@ -169,7 +169,7 @@ PhysPageNum StackFrameAllocator_alloc(StackFrameAllocator *allocator) {
     }
     /* 清空此页内存 ： 注意不能覆盖内核代码区，分配的内存只能是未使用部分*/
     PhysAddr addr = phys_addr_from_phys_page_num(ppn);
-    memset(addr.value,0,PAGE_SIZE);
+    memset((void*)addr.value,0,PAGE_SIZE);
     return ppn;
 }
 
@@ -204,7 +204,7 @@ void frame_alloctor_init()
     // 初始化时 kernelend 需向上取整
     StackFrameAllocator_new(&FrameAllocatorImpl);
     StackFrameAllocator_init(&FrameAllocatorImpl, \
-            ceil_phys(phys_addr_from_size_t(kernelend)), \
+            ceil_phys(phys_addr_from_size_t((u64)kernelend)), \
             ceil_phys(phys_addr_from_size_t(PHYSTOP)));
 }
 

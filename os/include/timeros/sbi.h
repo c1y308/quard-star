@@ -31,6 +31,10 @@ struct sbiret {
 	long value;
 };
 
+/* SBI 调用封装 (定义见 sbi.c), 在此统一声明, 避免调用方隐式声明 */
+void sbi_console_putchar(int ch);
+int  sbi_console_getchar(void);
+
 
 
 

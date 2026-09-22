@@ -26,8 +26,8 @@
 //计算应用内核栈的地址，每个应用的内核栈下都有一个无效的守卫页
 #define KSTACK(p) (TRAMPOLINE - ((p)+1)* 2*PAGE_SIZE)
 
-//Sv39 分页机制
-#define SATP_SV39 (8L << 60)
+// Sv39 分页机制
+#define SATP_SV39 (8ULL << 60)
 #define MAKE_SATP(pagetable) (SATP_SV39 | (((u64)pagetable)))
 #define MAKE_PAGETABLE(satp) ( satp & (SATP_SV39 - 1) )
 //Trap页开始位置
@@ -92,4 +92,6 @@ PhysAddr phys_addr_from_size_t(uint64_t v);
 PhysAddr phys_addr_from_phys_page_num(PhysPageNum ppn);
 VirtPageNum virt_page_num_from_virt_addr(VirtAddr virt_addr);
 VirtPageNum floor_virts(VirtAddr virt_addr);
+/* 根据虚拟页号查找页表项, 不存在时返回 NULL (定义见 address.c) */
+PageTableEntry* find_pte(PageTable* pt, VirtPageNum vpn);
 #endif

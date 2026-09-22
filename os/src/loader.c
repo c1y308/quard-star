@@ -1,6 +1,10 @@
 #include <timeros/loader.h>
 #include <timeros/address.h>
 extern u64 _num_app[];
+/* _app_names: 由 build.c 生成的一组以 '\0' 结尾的应用名字符串, 顺序与 app_id 一致 */
+extern char _app_names[];
+/* 解析后的应用名指针表, 下标即 app_id */
+static char* app_names[MAX_TASKS];
 
 // 获取加载的app数量
 size_t get_num_app()
@@ -23,6 +27,29 @@ AppMetadata  get_app_data(size_t app_id)
     return metadata;
 }
 
+/* 解析 _app_names 字符串表, 把每个应用名的指针填入 app_names[]
+   表内是连续存放、以 '\0' 分隔的字符串, 例如 "time\0write\0" */
+void get_app_names()
+{
+    size_t app_num = get_num_app();
+    char* p = _app_names;
+
+    printk("/**** APPS ****\n");
+    for (size_t i = 0; i < app_num; i++)
+    {
+        if (i >= MAX_TASKS)
+        {
+            printk("too many apps, only record %d\n", MAX_TASKS);
+            break;
+        }
+        app_names[i] = p;
+        printk("%s\n", app_names[i]);
+        /* 跳过当前名字及其结尾 '\0', 定位到下一个名字 */
+        p += strlen(app_names[i]) + 1;
+    }
+    printk("**************/\n");
+}
+
 
 static u8 flags_to_mmap_prot(u8 flags)
 {
@@ -38,7 +65,7 @@ void load_app(size_t app_id)
     AppMetadata metadata = get_app_data(app_id + 1);
 
     //ELF 文件头
-    elf64_ehdr_t *ehdr = metadata.start;
+    elf64_ehdr_t *ehdr = (elf64_ehdr_t*)metadata.start;
 
     //判断 elf 文件的魔数
     assert(*(u32 *)ehdr==ELFMAG);
@@ -61,7 +88,7 @@ void load_app(size_t app_id)
     for (size_t i = 0; i < ehdr->e_phnum; i++)
     {
         //拿到每个Program Header的指针
-        phdr =(u64) (ehdr->e_phoff + ehdr->e_phentsize * i + metadata.start);
+        phdr = (elf64_phdr_t*)(ehdr->e_phoff + ehdr->e_phentsize * i + metadata.start);
         if(phdr->p_type == PT_LOAD)
         {
             // 获取映射内存段开始位置
@@ -78,7 +105,7 @@ void load_app(size_t app_id)
                 PhysPageNum ppn = kalloc();
                     //获取到分配的物理内存的地址
                 u64 paddr = phys_addr_from_phys_page_num(ppn).value;
-                memcpy(paddr, metadata.start + phdr->p_offset + j, PAGE_SIZE);
+                memcpy((void*)paddr, (void*)(metadata.start + phdr->p_offset + j), PAGE_SIZE);
                     //内存逻辑段内存映射
                 PageTable_map(&proc->pagetable,virt_addr_from_size_t(start_va + j), \
                                 phys_addr_from_size_t(paddr), PAGE_SIZE , map_perm);

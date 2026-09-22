@@ -18,7 +18,7 @@ void set_user_trap_entry()
 void trap_handler()
 {
 	set_kernel_trap_entry();
-	TrapContext* cx = get_current_trap_cx();
+	TrapContext* cx = (TrapContext*)get_current_trap_cx();
 
     reg_t scause = r_scause();
 	reg_t cause_code = scause & 0xfff;

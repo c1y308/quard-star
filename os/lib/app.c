@@ -15,7 +15,7 @@ uint64_t syscall(size_t id, reg_t arg1, reg_t arg2, reg_t arg3) {
 
 uint64_t sys_write(size_t fd, const char* buf, size_t len)
 {
-    return syscall(__NR_write,fd,buf, len);
+    return syscall(__NR_write,fd,(reg_t)buf, len);
 }
 
 uint64_t sys_yield()
@@ -30,7 +30,7 @@ uint64_t sys_gettime()
 
 int sys_read(size_t fd ,const char* buf , size_t len)
 {
-    return syscall(__NR_read,fd,buf, len);
+    return syscall(__NR_read,fd,(reg_t)buf, len);
 }
 
 /* 获取一个字符 */

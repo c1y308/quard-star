@@ -10,6 +10,7 @@ typedef struct {
     int top;    // 不能定义成无符号类型，不然会导致 -1 > 0
 } Stack;
 
+void initStack(Stack *stack);
 bool isEmpty(Stack *stack);
 bool isFull(Stack *stack);
 void push(Stack *stack, u64 value);

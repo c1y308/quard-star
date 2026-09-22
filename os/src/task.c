@@ -1,22 +1,18 @@
 #include <timeros/os.h>
 
-#define USER_STACK_SIZE (4096 * 2)
-#define KERNEL_STACK_SIZE (4096 * 2)
-
-#define MAX_TASKS 10
+/* MAX_TASKS 已移至 task.h, 供 loader.c 等模块共享 */
 static int _current = 0;
 static int _top = 0;
 
-uint8_t KernelStack[MAX_TASKS][KERNEL_STACK_SIZE];
-uint8_t UserStack[MAX_TASKS][USER_STACK_SIZE];
-
+/* 各任务内核栈改由 proc_mapstacks 动态分配物理页并映射,
+   删除原先从未被引用的静态大数组 KernelStack/UserStack, 节省约 160KB BSS */
 struct TaskControlBlock tasks[MAX_TASKS];
 
 
 struct TaskContext tcx_init(reg_t kstack_ptr) {
     struct TaskContext task_ctx;
 
-    task_ctx.ra = trap_return;
+    task_ctx.ra = (reg_t)trap_return;
     task_ctx.sp = kstack_ptr;
     task_ctx.s0 = 0;
     task_ctx.s1 = 0;
@@ -45,10 +41,12 @@ void proc_mapstacks(PageTable* kpgtbl)
     if(pa == 0)
       panic("kalloc");
     u64 va = KSTACK((int) (p - tasks));
-    PageTable_map(kpgtbl, virt_addr_from_size_t(va + PAGE_SIZE), phys_addr_from_size_t((u64)pa), \
+    /* 栈页映射到该任务 2 页槽位的低页 [va, va+PAGE_SIZE);
+       槽位另一页保持未映射, 相邻未映射页即守卫页, 栈溢出会触发异常而非静默踩踏 */
+    PageTable_map(kpgtbl, virt_addr_from_size_t(va), phys_addr_from_size_t((u64)pa), \
                   PAGE_SIZE, PTE_R | PTE_W);
-    // 给应用内核栈赋值 
-    p->kstack = va + 2 * PAGE_SIZE;
+    // 给应用内核栈赋值: 栈顶在映射页高地址端, 向下生长
+    p->kstack = va + PAGE_SIZE;
   }
 }
 
@@ -97,7 +95,7 @@ TaskControlBlock* task_create_pt(size_t app_id)
 extern u64 kernel_satp;
 void app_init(size_t app_id)
 {
-    TrapContext* cx_ptr = tasks[app_id].trap_cx_ppn;
+    TrapContext* cx_ptr = (TrapContext*)tasks[app_id].trap_cx_ppn;
     reg_t sstatus = r_sstatus();
     // 设置 sstatus 寄存器第8位即SPP位为0 表示为U模式
     sstatus &= (0U << 8);

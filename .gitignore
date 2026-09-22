@@ -9,6 +9,7 @@
 /qemu-11.1.1/build/
 /opensbi-1.2/build/
 /trusted_domain/build/
+/test/uart/build/
 
 # ===== 日志 =====
 *.log

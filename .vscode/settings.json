@@ -7,6 +7,8 @@
         "types.h": "c",
         "context.h": "c",
         "stdarg.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "*.lds": "linkerscript",
+        "*.ld": "linkerscript"
     }
 }

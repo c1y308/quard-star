@@ -39,13 +39,14 @@ static const MemMapEntry quard_star_memmap[] = {
     [QUARD_STAR_SRAM]  = {     0x8000,        0x8000 },
     [QUARD_STAR_CLINT] = { 0x02000000,       0x10000 },
     [QUARD_STAR_PLIC]  = { 0x0c000000,      0x210000 },
-    [QUARD_STAR_UART0] = { 0x10000000,         0x1000 },
-    [QUARD_STAR_UART1] = { 0x10001000,         0x1000 },
-    [QUARD_STAR_UART2] = { 0x10002000,         0x1000 },
+    [QUARD_STAR_UART0] = { 0x10000000,        0x1000 },
+    [QUARD_STAR_UART1] = { 0x10001000,        0x1000 },
+    [QUARD_STAR_UART2] = { 0x10002000,        0x1000 },
     [QUARD_STAR_RTC]   = { 0x10003000,        0x1000 },
-    [QUARD_STAR_FLASH] = { 0x20000000,    0x2000000 },   
+    [QUARD_STAR_FLASH] = { 0x20000000,     0x2000000 },   
     [QUARD_STAR_DRAM]  = { 0x80000000,    0x40000000 },   
 };
+
 
 /*创建CPU */
 static void quard_star_cpu_create(MachineState *machine)
@@ -91,6 +92,8 @@ static void quard_star_cpu_create(MachineState *machine)
         sysbus_realize(SYS_BUS_DEVICE(&s->soc[i]), &error_abort);
     }
 }
+
+
 /* 创建flash并映射 */
 static void quard_star_flash_create(MachineState *machine)
 {

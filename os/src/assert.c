@@ -1,5 +1,6 @@
 #include <timeros/assert.h>
 #include <timeros/types.h>
+#include <timeros/stdio.h>
 
 // 强制阻塞
 static void spin(char *name)
