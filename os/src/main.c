@@ -10,6 +10,9 @@ void os_main()
    //初始化内存
    kvminit();
 
+   //初始化磁盘
+   virtio_disk_init();
+
    //初始化进程控制块
    procinit();
 
