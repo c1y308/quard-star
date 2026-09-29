@@ -14,7 +14,7 @@
 #include <sbi/sbi_scratch.h>
 #include <sbi/sbi_trap.h>
 
-#define BOOT_STATUS_RELOCATE_DONE	1
+#define BOOT_STATUS_RELOCATE_DONE	10
 #define BOOT_STATUS_BOOT_HART_DONE	2
 
 .macro	MOV_3R __d0, __s0, __d1, __s1, __d2, __s2

@@ -1,6 +1,9 @@
 # 获取当前脚本文件所在的目录
 SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 
+# 将 RISC-V 交叉工具链加入 PATH（工具链位于仓库同级的 riscv/bin 目录）
+export PATH=$SHELL_FOLDER/../riscv/bin:$PATH
+
 if [ ! -d "$SHELL_FOLDER/output" ]; then  
 mkdir $SHELL_FOLDER/output
 fi  
