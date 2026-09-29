@@ -10,6 +10,17 @@ size_t strlen(const char *str)
     return ptr - str;
 }
 
+//把 lhs 所指向的字符串和 rhs 所指向的字符串进行比较
+int strcmp(const char *lhs, const char *rhs)
+{
+    while (*lhs == *rhs && *lhs != EOS && *rhs != EOS)
+    {
+        lhs++;
+        rhs++;
+    }
+    return *lhs < *rhs ? -1 : *lhs > *rhs;
+}
+
 // 从存储区 src 复制 n 个字节到存储区 dest。
 void* memcpy(void *dest, const void *src, size_t count)
 {

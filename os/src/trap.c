@@ -2,6 +2,8 @@
 
 void trap_from_kernel()
 {
+	printk("trap_from_kernel: scause=%x sepc=%x sstatus=%x stval=%x satp=%x\n",
+	       r_scause(), r_sepc(), r_sstatus(), r_stval(), r_satp());
 	panic("a trap from kernel!\n");
 }
 

@@ -43,6 +43,28 @@ u64 current_user_token();
 void schedule();
 /* 启动第一个任务*/
 void run_first_task();
+/* 初始化所有进程控制块为 UnInit */
+void procinit();
+/* 映射应用程序用户栈 */
+void proc_ustack(struct TaskControlBlock* p);
+/* 返回当前进程控制块 */
+struct TaskControlBlock* current_proc();
+/* 分配新的 pid */
+int allocpid();
+/* 分配一个新进程(查找空闲槽, 建 trap 页与页表) */
+struct TaskControlBlock* allocproc();
+/* fork: 复制当前进程 */
+int __sys_fork();
+/* exec: 在当前进程中装载并运行名为 name 的应用 */
+int exec(const char* name);
+/* 释放进程资源并重置控制块 */
+void freeproc(struct TaskControlBlock* p);
+/* 把 p 的子进程改挂到 initproc(tasks[0]) */
+void children_proc_clear(struct TaskControlBlock* p);
+/* 退出当前进程并调度下一个 */
+void exit_current_and_run_next(u64 exit_code);
+/* 等待任一子进程退出, 返回其 pid; 无子进程返回 -1 */
+int wait();
 #endif
 
 

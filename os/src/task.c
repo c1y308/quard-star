@@ -4,9 +4,22 @@
 static int _current = 0;
 static int _top = 0;
 
+/* 全局 pid 分配计数器 */
+int nextpid = 0;
+
 /* 各任务内核栈改由 proc_mapstacks 动态分配物理页并映射,
    删除原先从未被引用的静态大数组 KernelStack/UserStack, 节省约 160KB BSS */
 struct TaskControlBlock tasks[MAX_TASKS];
+
+/* 初始化所有进程控制块为 UnInit */
+void procinit()
+{
+  struct TaskControlBlock *p;
+  for(p = tasks; p < &tasks[MAX_TASKS]; p++)
+  {
+    p->task_state = UnInit;
+  }
+}
 
 
 struct TaskContext tcx_init(reg_t kstack_ptr) {
@@ -77,6 +90,15 @@ void proc_pagetable(struct TaskControlBlock *p)
   p->pagetable = pagetable;
 }
 
+/* 映射应用程序用户栈开始地址 */
+void proc_ustack(struct TaskControlBlock *p)
+{
+    PhysPageNum ppn = kalloc();
+    u64 paddr = phys_addr_from_phys_page_num(ppn).value;
+    PageTable_map(&p->pagetable, virt_addr_from_size_t(p->ustack - PAGE_SIZE), phys_addr_from_size_t(paddr), \
+                  PAGE_SIZE, PTE_R | PTE_W | PTE_U);
+}
+
 TaskControlBlock* task_create_pt(size_t app_id)
 {
   if(_top < MAX_TASKS)
@@ -113,10 +135,13 @@ void app_init(size_t app_id)
     // 设置内核trap_handler的地址
     cx_ptr->trap_handler = (u64)trap_handler;
 
-    /* 构造每个任务任务控制块中的任务上下文，设置 ra 寄存器为 trap_return 的入口地址*/
-    tasks[app_id].task_context = tcx_init((reg_t)cx_ptr);
+    /* 构造每个任务任务控制块中的任务上下文，设置 ra 寄存器为 trap_return 的入口地址,
+       sp 必须为内核栈顶(kstack), 而非 trap 上下文地址 */
+    tasks[app_id].task_context = tcx_init((reg_t)tasks[app_id].kstack);
     // 初始化 TaskStatus 字段为 Ready
     tasks[app_id].task_state = Ready;
+    /* 分配 pid */
+    tasks[app_id].pid = allocpid();
 }
 
 /* 返回当前执行的应用程序的trap上下文的地址 */
@@ -140,12 +165,11 @@ void schedule()
     int next = _current + 1;
     next = next % _top;
 
-    if(tasks[next].task_state == Ready)
+    if(tasks[next].task_state == Ready || tasks[next].task_state == Running)
     {
         struct TaskContext *current_task_cx_ptr = &(tasks[_current].task_context);
         struct TaskContext *next_task_cx_ptr = &(tasks[next].task_context);
         tasks[next].task_state = Running;
-        tasks[_current].task_state = Ready;
         _current = next;
         __switch(current_task_cx_ptr,next_task_cx_ptr);
     }
@@ -159,4 +183,183 @@ void run_first_task()
     struct TaskContext _unused ;
     __switch(&_unused,next_task_cx_ptr);
     panic("unreachable in run_first_task!");
+}
+
+/* 返回当前执行的应用程序控制块 */
+struct TaskControlBlock* current_proc()
+{
+  return &tasks[_current];
+}
+
+/* 分配一个新的 pid */
+int allocpid()
+{
+  int pid;
+  pid = nextpid;
+  nextpid = nextpid + 1;
+  return pid;
+}
+
+/* 查找空闲槽分配新进程: 设 pid/Ready, 建 trap 页与用户页表 */
+struct TaskControlBlock* allocproc()
+{
+  struct TaskControlBlock* p;
+  for(p = tasks; p < &tasks[MAX_TASKS]; p++)
+  {
+    if(p->task_state == UnInit)
+    {
+      goto found;
+    }
+  }
+  return 0;
+
+found:
+  p->pid = allocpid();
+  p->task_state = Ready;
+  // 分配一页内存用于存放 trap, 同时初始化任务上下文
+  proc_trap(p);
+  // 为用户程序创建页表, 映射跳板页和 trap 上下文页
+  proc_pagetable(p);
+  return p;
+}
+
+/* fork: 复制当前进程的地址空间/trap 页, 子进程 a0=0 */
+int __sys_fork()
+{
+  struct TaskControlBlock* np;
+  struct TaskControlBlock* p = current_proc();
+  // 分配进程
+  if((np = allocproc()) == 0){
+    return -1;
+  }
+
+  // 拷贝父进程的内存数据, 根据页表查找物理页拷贝
+  uvmcopy(&p->pagetable, &np->pagetable, p->base_size);
+
+  // 拷贝父进程的 trap 页数据
+  memcpy((void*)np->trap_cx_ppn, (void*)p->trap_cx_ppn, PAGE_SIZE);
+
+  // 子进程返回值为 0
+  TrapContext* cx_ptr = (TrapContext*)np->trap_cx_ppn;
+  cx_ptr->a0 = 0;
+  cx_ptr->kernel_sp = np->kstack;
+  // 复制 TCB 的信息
+  np->entry = p->entry;
+  np->base_size = p->base_size;
+  np->parent = p;
+  np->ustack = p->ustack;
+
+  np->task_context = tcx_init((reg_t)np->kstack);
+
+  _top++;
+  printk("sys_fork:%d\n", _top);
+  return np->pid;
+}
+
+/* exec: 在当前进程中装载并运行名为 name 的应用 */
+int exec(const char* name)
+{
+    AppMetadata metadata = get_app_data_by_name((char*)name);
+    if(metadata.id < 0)
+    {
+      return -1;
+    }
+    //ELF 文件头
+    elf64_ehdr_t *ehdr = (elf64_ehdr_t*)metadata.start;
+    elf_check(ehdr);
+
+    struct TaskControlBlock* proc = current_proc();
+    PageTable old_pagetable = proc->pagetable;
+    u64 oldsz = proc->base_size;
+    //重新分配页表
+    proc_pagetable(proc);
+    //加载程序段
+    load_segment(ehdr, proc);
+    //映射应用程序用户栈开始地址
+    proc_ustack(proc);
+
+    TrapContext* cx_ptr = (TrapContext*)proc->trap_cx_ppn;
+    cx_ptr->sepc = (u64)ehdr->e_entry;
+    cx_ptr->sp = proc->ustack;
+
+    proc_freepagetable(&old_pagetable, oldsz);
+    printk("sys_exec\n");
+    return 0;
+}
+
+/* 释放进程资源并重置控制块为 UnInit */
+void freeproc(struct TaskControlBlock* p)
+{
+    proc_freepagetable(&p->pagetable, p->base_size);
+
+    p->pagetable.root_ppn.value = 0;
+    p->base_size = 0;
+    p->parent = 0;
+    p->ustack = 0;
+    p->entry = 0;
+    p->task_state = UnInit;
+    p->exit_code = 0;
+}
+
+/* 将当前进程的所有子进程挂在初始进程 initproc(tasks[0]) 下面 */
+void children_proc_clear(struct TaskControlBlock *p)
+{
+  struct TaskControlBlock *children;
+  for(children = tasks; children < &tasks[MAX_TASKS]; children++)
+  {
+    if(children->parent == p)
+    {
+      children->parent = &tasks[0];
+    }
+  }
+}
+
+/* 退出当前进程并调度下一个 */
+void exit_current_and_run_next(u64 exit_code)
+{
+  /* 不能把 0 号进程干掉了 */
+  struct TaskControlBlock* p = current_proc();
+  if(p->pid == 0)
+  {
+    panic("init exiting");
+  }
+
+  p->exit_code = exit_code;
+  p->task_state = Zombie;
+  children_proc_clear(p);
+  _top--;
+  schedule();
+  panic("zombie exit");
+}
+
+/* 等待任一子进程退出, 回收并返回其 pid; 无子进程返回 -1 */
+int wait()
+{
+  struct TaskControlBlock *children;
+  struct TaskControlBlock* p = current_proc();
+  int pid, havekids;
+  for(;;)
+  {
+    havekids = 0;
+    for(children = tasks; children < &tasks[MAX_TASKS]; children++)
+    {
+      if(children->parent == p)
+      {
+        havekids = 1;
+        if(children->task_state == Zombie)
+        {
+          pid = children->pid;
+          freeproc(children);
+          printk("child pid:%d\n", pid);
+          return pid;
+        }
+      }
+    }
+    // 如果此进程没有子进程, 则返回 -1
+    if(!havekids)
+    {
+      return -1;
+    }
+    schedule();
+  }
 }

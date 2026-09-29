@@ -10,10 +10,12 @@ void os_main()
    //初始化内存
    kvminit();
 
+   //初始化进程控制块
+   procinit();
+
+   //加载 initproc 进程(app_0)
    load_app(0);
    app_init(0);
-   load_app(1);
-   app_init(1);
    //映射内核
    kvminithart();
 

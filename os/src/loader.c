@@ -22,6 +22,8 @@ AppMetadata  get_app_data(size_t app_id)
 
     metadata.size = _num_app[app_id+1] - _num_app[app_id];    // 获取app结束地址  
 
+    metadata.id = app_id;    // 记录 app 索引, get_app_data_by_name/exec 用其判定是否找到
+
     assert(app_id <= num_app);
 
     return metadata;
@@ -50,6 +52,28 @@ void get_app_names()
     printk("**************/\n");
 }
 
+/* 按名字查找 app: 命中返回其元数据(id>=0), 未命中返回 id==-1 的元数据 */
+AppMetadata get_app_data_by_name(char* path)
+{
+    AppMetadata metadata;
+    metadata.id = -1;
+    metadata.start = 0;
+    metadata.size = 0;
+
+    size_t app_num = get_num_app();
+    for (size_t i = 0; i < app_num; i++)
+    {
+        if (strcmp(path, app_names[i]) == 0)
+        {
+            metadata = get_app_data(i + 1);
+            printk("find app:%s id:%d\n", path, metadata.id);
+            return metadata;
+        }
+    }
+    printk("app not exit!!\n");
+    return metadata;
+}
+
 
 static u8 flags_to_mmap_prot(u8 flags)
 {
@@ -58,37 +82,28 @@ static u8 flags_to_mmap_prot(u8 flags)
            (flags & PF_X ? PTE_X : 0);
 }
 
-void load_app(size_t app_id)
-
+/* 校验 ELF 魔数与架构 */
+void elf_check(elf64_ehdr_t *ehdr)
 {
-    //加载ELF文件
-    AppMetadata metadata = get_app_data(app_id + 1);
-
-    //ELF 文件头
-    elf64_ehdr_t *ehdr = (elf64_ehdr_t*)metadata.start;
-
     //判断 elf 文件的魔数
-    assert(*(u32 *)ehdr==ELFMAG);
-    
+    assert(*(u32 *)ehdr == ELFMAG);
     //判断传入文件是否为 riscv64 的
     if (ehdr->e_machine != EM_RISCV || ehdr->e_ident[EI_CLASS] != ELFCLASS64)
     {
         panic("only riscv64 elf file is supported");
     }
+}
 
-    //记录APP程序的入口地址，为 main 函数地址
-    u64 entry = (u64)ehdr->e_entry;
-    //创建任务
-    TaskControlBlock* proc = task_create_pt(app_id);
-    //赋值任务的 entry
-    proc->entry = entry;
+/* 解析 program header, 把各 PT_LOAD 段装载到 proc 页表, 并计算 ustack/base_size */
+void load_segment(elf64_ehdr_t *ehdr, struct TaskControlBlock* proc)
+{
     // Program Header 解析
     elf64_phdr_t *phdr;
     //遍历每一个逻辑段
     for (size_t i = 0; i < ehdr->e_phnum; i++)
     {
         //拿到每个Program Header的指针
-        phdr = (elf64_phdr_t*)(ehdr->e_phoff + ehdr->e_phentsize * i + metadata.start);
+        phdr = (elf64_phdr_t*)((u64)ehdr + ehdr->e_phoff + ehdr->e_phentsize * i);
         if(phdr->p_type == PT_LOAD)
         {
             // 获取映射内存段开始位置
@@ -99,27 +114,45 @@ void load_app(size_t app_id)
             u8 map_perm = PTE_U | flags_to_mmap_prot(phdr->p_flags);
             // 获取映射内存大小,需要向上对齐
             u64 map_size = PGROUNDUP(phdr->p_memsz);
-            for (size_t j = 0; j < map_size; j+= PAGE_SIZE)
+            for (size_t j = 0; j < map_size; j += PAGE_SIZE)
             {
                 // 分配物理内存，加载程序段，然后映射
                 PhysPageNum ppn = kalloc();
-                    //获取到分配的物理内存的地址
+                //获取到分配的物理内存的地址
                 u64 paddr = phys_addr_from_phys_page_num(ppn).value;
-                memcpy((void*)paddr, (void*)(metadata.start + phdr->p_offset + j), PAGE_SIZE);
-                    //内存逻辑段内存映射
-                PageTable_map(&proc->pagetable,virt_addr_from_size_t(start_va + j), \
-                                phys_addr_from_size_t(paddr), PAGE_SIZE , map_perm);
+                memcpy((void*)paddr, (void*)((u64)ehdr + phdr->p_offset + j), PAGE_SIZE);
+                //内存逻辑段内存映射
+                PageTable_map(&proc->pagetable, virt_addr_from_size_t(start_va + j), \
+                              phys_addr_from_size_t(paddr), PAGE_SIZE, map_perm);
             }
-        
-            
         }
     }
 
+    // 计算用户栈位置与应用数据总大小(base_size 供 fork/exit 释放页表使用)
+    proc->ustack = 2 * PAGE_SIZE + PGROUNDUP(proc->ustack);
+    proc->base_size = proc->ustack;
+}
+
+void load_app(size_t app_id)
+{
+    //加载ELF文件
+    AppMetadata metadata = get_app_data(app_id + 1);
+
+    //ELF 文件头
+    elf64_ehdr_t *ehdr = (elf64_ehdr_t*)metadata.start;
+
+    //校验 ELF 魔数与架构
+    elf_check(ehdr);
+
+    //创建任务
+    TaskControlBlock* proc = task_create_pt(app_id);
+
+    //加载程序段
+    load_segment(ehdr, proc);
+
+    //记录APP程序的入口地址，为 main 函数地址
+    proc->entry = (u64)ehdr->e_entry;
+
     // 映射应用程序用户栈开始地址
-    proc->ustack =  2 * PAGE_SIZE + PGROUNDUP(proc->ustack);
-    PhysPageNum ppn = kalloc();
-    u64 paddr = phys_addr_from_phys_page_num(ppn).value;
-    PageTable_map(&proc->pagetable,virt_addr_from_size_t(proc->ustack - PAGE_SIZE),phys_addr_from_size_t(paddr), \
-                  PAGE_SIZE, PTE_R | PTE_W | PTE_U);
-               
+    proc_ustack(proc);
 }

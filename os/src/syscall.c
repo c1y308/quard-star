@@ -47,6 +47,8 @@ void __sys_read(size_t fd, const char* data, size_t len)
             c = sbi_console_getchar();
             if(c != -1)
                 break;
+            schedule();
+            continue;
         }
         char* str = translated_byte_buffer(data , len);
         str[0]  = c;
@@ -63,6 +65,23 @@ uint64_t __sys_gettime()
     return get_time_us();
 }
 
+int __sys_exec(const char* name)
+{
+    char* app_name = translated_byte_buffer(name, 0);
+    printk("exec app_name:%s\n", app_name);
+    return exec(app_name);
+}
+
+void __sys_exit(u64 exit_code)
+{
+    exit_current_and_run_next(exit_code);
+}
+
+int __sys_wait()
+{
+    return wait();
+}
+
 uint64_t __SYSCALL(size_t syscall_id, reg_t arg1, reg_t arg2, reg_t arg3) {
         switch (syscall_id)
         {
@@ -77,6 +96,15 @@ uint64_t __SYSCALL(size_t syscall_id, reg_t arg1, reg_t arg2, reg_t arg3) {
             break;
         case __NR_gettimeofday:
             return __sys_gettime();
+        case __NR_exit:
+            __sys_exit(arg1);
+            break;
+        case __NR_clone:
+            return __sys_fork();
+        case __NR_execve:
+            return __sys_exec((const char*)arg2);
+        case __NR_waitid:
+            return __sys_wait();
         default:
             printk("Unsupported syscall id:%d\n",syscall_id);
             break;
