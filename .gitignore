@@ -21,3 +21,6 @@
 /os/*.bin
 /os/*.lst
 /os/build.out
+
+# os/user 的 objdump 反汇编产物(time.txt/write.txt/xec.txt 等), 非源码
+/os/user/*.txt
