@@ -43,6 +43,7 @@ static const MemMapEntry quard_star_memmap[] = {
     [QUARD_STAR_UART1] = { 0x10001000,        0x1000 },
     [QUARD_STAR_UART2] = { 0x10002000,        0x1000 },
     [QUARD_STAR_RTC]   = { 0x10003000,        0x1000 },
+    [QUARD_STAR_VIRTIO0] = { 0x10100000,      0x1000 },
     [QUARD_STAR_FLASH] = { 0x20000000,     0x2000000 },   
     [QUARD_STAR_DRAM]  = { 0x80000000,    0x40000000 },   
 };
@@ -245,6 +246,15 @@ static void quard_star_rtc_create(MachineState *machine)
         qdev_get_gpio_in(DEVICE(s->plic[0]), QUARD_STAR_RTC_IRQ));
 }
 
+/* 创建 virtio-mmio: 挂到 PLIC 的 QUARD_STAR_VIRTIO0_IRQ, 供 -device virtio-blk-device 使用 */
+static void quard_star_virtio_mmio_create(MachineState *machine)
+{
+    QuardStarState *s = RISCV_VIRT_MACHINE(machine);
+    sysbus_create_simple("virtio-mmio",
+        quard_star_memmap[QUARD_STAR_VIRTIO0].base,
+        qdev_get_gpio_in(DEVICE(s->plic[0]), QUARD_STAR_VIRTIO0_IRQ));
+}
+
 /* quard-star 初始化各种硬件 */
 static void quard_star_machine_init(MachineState *machine)
 {
@@ -262,6 +272,8 @@ static void quard_star_machine_init(MachineState *machine)
     quard_star_serial_create(machine);
     // 创建 RTC
     quard_star_rtc_create(machine);
+    // 创建 virtio-mmio
+    quard_star_virtio_mmio_create(machine);
 }
 
 static void quard_star_machine_instance_init(Object *obj)

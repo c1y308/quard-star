@@ -110,3 +110,11 @@ dd of=fw.bin bs=1k conv=notrunc seek=4K if=$SHELL_FOLDER/output/trusted_domain/t
 dd of=fw.bin bs=1k conv=notrunc seek=8K if=$SHELL_FOLDER/output/os/os.bin
 
 
+# 生成64M空的磁盘文件, 供 run.sh 的 virtio-blk-device 使用
+echo "------------------------- 生成磁盘文件 ----------------------------"
+if [ ! -d "$SHELL_FOLDER/output/disk" ]; then  
+mkdir $SHELL_FOLDER/output/disk
+fi 
+dd if=/dev/urandom of=$SHELL_FOLDER/output/disk/disk.img bs=64M count=1
+
+
