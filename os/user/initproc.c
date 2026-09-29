@@ -3,11 +3,7 @@
 #include <timeros/string.h>
 int main()
 {
-
-    while (1)
-    {
-        char data = getchar();
-        printf("%c",data);
-    }
+    /* 0 号进程(initproc)直接 exec 成用户 shell */
+    sys_exec("user_shell");
     return 0;
 }

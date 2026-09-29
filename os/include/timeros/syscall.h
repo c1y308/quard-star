@@ -20,3 +20,7 @@ uint64_t sys_yield();
 uint64_t sys_gettime();
 int sys_read(size_t fd ,const char* buf , size_t len);
 char getchar();
+int sys_fork();
+int sys_exec(char* name);
+int sys_waitpid();
+int sys_exit(u64 exit_code);

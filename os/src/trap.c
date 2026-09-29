@@ -2,8 +2,6 @@
 
 void trap_from_kernel()
 {
-	printk("trap_from_kernel: scause=%x sepc=%x sstatus=%x stval=%x satp=%x\n",
-	       r_scause(), r_sepc(), r_sstatus(), r_stval(), r_satp());
 	panic("a trap from kernel!\n");
 }
 
@@ -44,8 +42,13 @@ void trap_handler()
 		{
 		/* U模式下的syscall */
 		case 8:
-			cx->a0 = __SYSCALL(cx->a7,cx->a0,cx->a1,cx->a2);
+			/* 必须先推进 sepc 再执行 syscall: exec 会把 sepc 覆写为新程序入口,
+			   若在其后 +=8 会把入口地址破坏掉(如 0x10000 -> 0x10008) */
 			cx->sepc += 8;
+			int result = __SYSCALL(cx->a7,cx->a0,cx->a1,cx->a2);
+			/* fork/wait 等可能切换当前进程, 重新获取 trap 上下文再写返回值 */
+			cx = (TrapContext*)get_current_trap_cx();
+			cx->a0 = result;
 			break;
 		default:
 			printk("undfined exception scause:%x\n",scause);

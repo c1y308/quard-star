@@ -21,6 +21,21 @@ int strcmp(const char *lhs, const char *rhs)
     return *lhs < *rhs ? -1 : *lhs > *rhs;
 }
 
+//将 src 的前 n 个字符拼接到 dest 末尾, 并以 '\0' 结尾
+void strncat(char *dest, const char *src, int n)
+{
+    while (*dest)
+    {
+        dest++;
+    }
+    while (n > 0 && *src)
+    {
+        *dest++ = *src++;
+        n--;
+    }
+    *dest = '\0';
+}
+
 // 从存储区 src 复制 n 个字节到存储区 dest。
 void* memcpy(void *dest, const void *src, size_t count)
 {

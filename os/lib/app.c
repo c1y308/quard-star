@@ -40,3 +40,27 @@ char getchar()
     sys_read(stdin,data,1);
     return data[0];
 }
+
+/* fork: 复制当前进程, 子进程返回 0, 父进程返回子进程 pid */
+int sys_fork()
+{
+    return syscall(__NR_clone,0,0,0);
+}
+
+/* exec: 在当前进程中装载并运行名为 name 的应用 */
+int sys_exec(char* name)
+{
+    return syscall(__NR_execve,0,(reg_t)name,0);
+}
+
+/* 等待任一子进程退出, 返回其 pid */
+int sys_waitpid()
+{
+    return syscall(__NR_waitid,0,0,0);
+}
+
+/* 退出当前进程 */
+int sys_exit(u64 exit_code)
+{
+    return syscall(__NR_exit,exit_code,0,0);
+}
