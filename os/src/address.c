@@ -263,6 +263,12 @@ PhysPageNum kalloc(void)
     return frame;
 }
 
+/* 释放一页物理内存, 归还给帧分配器 */
+void kfree(PhysPageNum ppn)
+{
+    StackFrameAllocator_dealloc(&FrameAllocatorImpl,ppn);
+}
+
 PageTableEntry* find_pte(PageTable* pt, VirtPageNum vpn)
 {
     // 拿到虚拟页号的三级索引，保存到idx数组中
@@ -275,13 +281,13 @@ PageTableEntry* find_pte(PageTable* pt, VirtPageNum vpn)
     {
         //拿到具体的页表项
         PageTableEntry* pte =  &get_pte_array(ppn)[idx[i]];
-            if (i == 2) {
-                return pte;
-            }
-        //如果此项页表为空
-            if (!PageTableEntry_is_valid(pte)) {
-                return NULL;
-            }
+        //如果此项页表为空, 返回 NULL (含叶子层; uvmcopy/uvmunmap 依赖此语义跳过未映射页)
+        if (!PageTableEntry_is_valid(pte)) {
+            return NULL;
+        }
+        if (i == 2) {
+            return pte;
+        }
         //取出进入下级页表的物理页号
         ppn = PageTableEntry_ppn(pte);
     }
@@ -317,6 +323,98 @@ void PageTable_unmap(PageTable* pt, VirtPageNum vpn)
     PageTableEntry* pte = find_pte(pt,vpn);
     assert(!PageTableEntry_is_valid(pte));
     *pte = PageTableEntry_empty();
+}
+
+/* ===== 用户地址空间管理: 供进程 fork/exec/exit 使用 ===== */
+
+/* 将父进程用户地址空间 [0, sz] 逐页复制到子进程新页表 */
+int uvmcopy(PageTable* old, PageTable* new, u64 sz)
+{
+    PageTableEntry* pte;
+    u64 i;
+    u8 flags;
+
+    for (i = 0; i <= sz; i+=PAGE_SIZE)
+    {
+        VirtPageNum vpn = floor_virts(virt_addr_from_size_t(i));
+        pte = find_pte(old,vpn);
+
+        if (pte != 0)
+        {
+            /* 将PTE 转换为物理地址*/
+            u64 phyaddr = PTE2PA(pte->bits);
+            /* 得到PTE的映射 flags */
+            flags = PTE_FLAGS(pte->bits);
+            /* 分配一页内存 */
+            PhysPageNum ppn = kalloc();
+            u64 paddr = phys_addr_from_phys_page_num(ppn).value;
+            /* 拷贝内存 */
+            memcpy((void*)paddr,(void*)phyaddr,PAGE_SIZE);
+
+            /* 映射内存 */
+            PageTable_map(new,virt_addr_from_size_t(i), \
+                              phys_addr_from_size_t(paddr),PAGE_SIZE,flags);
+        }
+    }
+    return 0;
+}
+
+/* 取消映射 [vpn, vpn+npages); do_free 为真时一并释放物理页 */
+void uvmunmap(PageTable* pt, VirtPageNum vpn, u64 npages, int do_free)
+{
+    PageTableEntry* pte;
+    u64 a;
+    for (a = vpn.value; a < vpn.value + npages; a++)
+    {
+        pte = find_pte(pt,virt_page_num_from_size_t(a));
+        if(pte !=0 )
+        {
+            if(do_free)
+            {
+                u64 phyaddr = PTE2PA(pte->bits);
+                PhysPageNum ppn = floor_phys(phys_addr_from_size_t(phyaddr));
+                kfree(ppn);
+            }
+            *pte = PageTableEntry_empty();
+        }
+    }
+}
+
+/* 递归释放整棵页表, 遇到仍映射的叶子页说明用户内存未先 unmap, 视为错误 */
+void freewalk(PhysPageNum ppn)
+{
+    for (int i = 0; i < 512; i++)
+    {
+        PageTableEntry* pte =  &get_pte_array(ppn)[i];
+        if((pte->bits & PTE_V) && (pte->bits & (PTE_R|PTE_W|PTE_X)) == 0)
+        {
+            PhysPageNum child_ppn = PageTableEntry_ppn(pte);
+            freewalk(child_ppn);
+            *pte = PageTableEntry_empty();
+        }
+        else if(pte->bits & PTE_V)
+        {
+            panic("freewalk: leaf");
+        }
+    }
+    kfree(ppn); 
+}
+
+void uvmfree(PageTable* pt , u64 sz)
+{
+    if(sz > 0)
+    {
+        uvmunmap(pt,floor_virts(virt_addr_from_size_t(0)),sz/PAGE_SIZE,1);
+    }
+    freewalk(pt->root_ppn);
+}
+
+/* 释放进程页表: 先解除跳板页/trap 页映射(不释放物理页, 二者为共享内核页), 再释放用户内存与页表本身 */
+void proc_freepagetable(PageTable* pagetable, u64 sz)
+{
+  uvmunmap(pagetable, floor_virts(virt_addr_from_size_t(TRAMPOLINE)), 1, 0);
+  uvmunmap(pagetable, floor_virts(virt_addr_from_size_t(TRAPFRAME)), 1, 0);
+  uvmfree(pagetable, sz);
 }
 
 extern char etext[];

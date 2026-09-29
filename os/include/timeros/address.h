@@ -36,6 +36,10 @@
 
 #define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
 #define PGROUNDDOWN(a) (((a)) & ~(PAGE_SIZE-1))
+
+/* 由页表项取出物理地址与标志位 */
+#define PTE2PA(pte) (((pte) >> 10) << 12)
+#define PTE_FLAGS(pte) ((pte) & 0x3FF)
 /* 物理地址 */
 typedef struct {
     uint64_t value; 
@@ -85,13 +89,21 @@ void frame_alloctor_init();
 void kvminit();
 void kvminithart();
 PhysPageNum kalloc(void);
+void kfree(PhysPageNum ppn);
 void PageTable_map(PageTable* pt,VirtAddr va, PhysAddr pa, u64 size ,uint8_t pteflgs);
 
 VirtAddr virt_addr_from_size_t(uint64_t v);
 PhysAddr phys_addr_from_size_t(uint64_t v);
 PhysAddr phys_addr_from_phys_page_num(PhysPageNum ppn);
 VirtPageNum virt_page_num_from_virt_addr(VirtAddr virt_addr);
+VirtPageNum virt_page_num_from_size_t(uint64_t v);
 VirtPageNum floor_virts(VirtAddr virt_addr);
 /* 根据虚拟页号查找页表项, 不存在时返回 NULL (定义见 address.c) */
 PageTableEntry* find_pte(PageTable* pt, VirtPageNum vpn);
+
+/* 用户地址空间管理 (进程 fork/exec/exit 使用) */
+int uvmcopy(PageTable* old, PageTable* new, u64 sz);
+void uvmunmap(PageTable* pt, VirtPageNum vpn, u64 npages, int do_free);
+void uvmfree(PageTable* pt, u64 sz);
+void proc_freepagetable(PageTable* pagetable, u64 sz);
 #endif

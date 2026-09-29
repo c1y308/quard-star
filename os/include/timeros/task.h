@@ -11,12 +11,14 @@ typedef enum TaskState
 	UnInit, // 未初始化
     Ready, // 准备运行
     Running, // 正在运行
-    Exited, // 已退出
+    Zombie, // 已退出(僵尸态, 等待父进程 wait 回收)
 }TaskState;
 
 typedef struct TaskControlBlock
 {
     TaskState task_state;       //任务状态
+    int pid;                    //进程 ID
+    struct TaskControlBlock* parent;  //父进程
     TaskContext task_context;   //任务上下文
     u64 trap_cx_ppn;            //Trap 上下文所在物理地址
     u64  base_size;             //应用数据大小
@@ -24,6 +26,7 @@ typedef struct TaskControlBlock
     u64  ustack;                //应用用户栈的虚拟地址
     u64  entry;                 //应用程序入口地址
     PageTable pagetable;        //应用页表所在物理页
+    u64 exit_code;              //进程退出码
 }TaskControlBlock;
 
 /* 映射用户程序内核栈 */
