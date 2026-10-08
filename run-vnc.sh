@@ -18,7 +18,7 @@
 #   VNC 默认视图 = console0 = UART0, 连上即可看主输出, 无需切换
 #   Ctrl-Alt-1 -> UART0 (普通世界 OpenSBI+timeros / 测试固件)   ← 主要输出 & 默认
 #   Ctrl-Alt-2 -> UART1 (备用)
-#   Ctrl-Alt-3 -> UART2 (可信域 FreeRTOS)
+#   Ctrl-Alt-3 -> UART2 (可信域当前固件的输出)
 #   (运行本脚本的终端即 QEMU monitor, 输入 quit 退出)
 #   (若 VNC 客户端拦截了 Ctrl-Alt, 用其"发送按键"功能, 或改用无图形脚本)
 # =============================================================================
@@ -32,15 +32,15 @@ VNC_DISPLAY="${1:-127.0.0.1:0}"
 
 # 要运行的固件镜像(二选一: 注释掉当前行, 取消注释另一行即可切换):
 #   默认 = 正式启动链 fw.bin (lowlevel_fw -> openSBI -> timeros/可信域)
-# FW_IMAGE="$SHELL_FOLDER/output/fw/fw.bin"
+FW_IMAGE="$SHELL_FOLDER/output/fw/fw.bin"
 #   可选 = UART 裸机测试固件(需先在 test/uart 下执行 make), 输出见 VNC 控制台 Ctrl-Alt-1
-FW_IMAGE="$SHELL_FOLDER/test/uart/build/test_fw.bin"
+# FW_IMAGE="$SHELL_FOLDER/test/uart/build/test_fw.bin"
 
-echo "[run-vnc] 启动 quard-star, VNC 显示 = ${VNC_DISPLAY} (display :0 = 端口 5900)"
+echo "[run-vnc] 启动 quard-star, VNC 显示 = ${VNC_DISPLAY} (默认 :0 对应 TCP 5900)"
 echo "[run-vnc] 运行固件 = ${FW_IMAGE}"
-echo "[run-vnc] 客户端 VNC Viewer 连接 localhost:5900 (经 SSH LocalForward)"
-echo "[run-vnc] 控制台切换: Ctrl-Alt-1 普通世界 / -3 可信域 / -4 monitor"
-echo "[run-vnc] 关闭: 在 monitor 控制台输入 quit, 或 Ctrl-C 结束本脚本"
+echo "[run-vnc] 默认配置下，VNC Viewer 连接 localhost:5900 (经 SSH LocalForward)"
+echo "[run-vnc] VNC 画面切换: Ctrl-Alt-1 UART0 / Ctrl-Alt-2 UART1 / Ctrl-Alt-3 UART2 (同一 VNC 端口)"
+echo "[run-vnc] QEMU monitor 在运行脚本的终端；输入 quit 或按 Ctrl-C 结束"
 
 $SHELL_FOLDER/output/qemu/bin/qemu-system-riscv64 \
 -M quard-star \
@@ -48,6 +48,8 @@ $SHELL_FOLDER/output/qemu/bin/qemu-system-riscv64 \
 -smp 8 \
 -bios none \
 -drive if=pflash,bus=0,unit=0,format=raw,file=$FW_IMAGE \
+-drive file=$SHELL_FOLDER/output/disk/disk.img,if=none,format=raw,id=x0 \
+-device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 \
 -vnc $VNC_DISPLAY \
 -serial vc:$DEFAULT_VC \
 -serial vc:$DEFAULT_VC \

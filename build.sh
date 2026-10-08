@@ -1,19 +1,29 @@
+#!/usr/bin/env bash
+set -e
+
 # 获取当前脚本文件所在的目录
 SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 
-# 将 RISC-V 交叉工具链加入 PATH（工具链位于仓库同级的 riscv/bin 目录）
-export PATH=$SHELL_FOLDER/../riscv/bin:$PATH
+# 将 RISC-V 交叉工具链加入 PATH（工具链位于仓库同级的 toolchain/bin 目录）
+export PATH=$SHELL_FOLDER/../toolchain/bin:$PATH
+
+if ! command -v dtc >/dev/null 2>&1; then
+    echo "缺少 dtc（device-tree-compiler），无法生成 quard_star_sbi.dtb" >&2
+    exit 1
+fi
 
 if [ ! -d "$SHELL_FOLDER/output" ]; then  
 mkdir $SHELL_FOLDER/output
 fi  
 
-cd $SHELL_FOLDER/qemu-11.1.1
-if [ ! -d "$SHELL_FOLDER/output/qemu" ]; then  
-./configure --prefix=$SHELL_FOLDER/output/qemu --target-list=riscv64-softmmu --enable-gtk --enable-vte --disable-gio --disable-docs
-fi  
-make -j$(nproc)
-make install
+QEMU_BUILD_DIR="$SHELL_FOLDER/../qemu-build"
+if [ ! -x "$SHELL_FOLDER/output/qemu/bin/qemu-system-riscv64" ]; then
+    mkdir -p "$QEMU_BUILD_DIR"
+    cd "$QEMU_BUILD_DIR"
+    "$SHELL_FOLDER/qemu-11.1.1/configure" --prefix="$SHELL_FOLDER/output/qemu" --target-list=riscv64-softmmu --enable-gtk --enable-vte --disable-gio --disable-docs
+    make -j"$(nproc)"
+    make install
+fi
 
 
 # # 编译 lowlevelboot
@@ -98,8 +108,7 @@ dd of=fw.bin bs=1k count=32k if=/dev/zero
 dd of=fw.bin bs=1k conv=notrunc seek=0 if=$SHELL_FOLDER/output/lowlevelboot/lowlevel_fw.bin
 # 写入 quard_star_sbi.dtb 地址偏移量为 512K，因此 fdt的地址偏移量为 0x80000
 dd of=fw.bin bs=1k conv=notrunc seek=512 if=$SHELL_FOLDER/output/opensbi/quard_star_sbi.dtb
-# 写入 uboot.dtb,地址偏移量为 1K*1K = 0x100000
-dd of=fw.bin bs=1k conv=notrunc seek=1K if=$SHELL_FOLDER/output/uboot/quard_star_uboot.dtb
+# U-Boot 构建及其 DTB 加载当前均已禁用，保留此区域为空。
 # 写入 fw_jump.bin 地址偏移量为 2K*1K= 0x200000，因此 fw_jump.bin的地址偏移量为  0x200000
 dd of=fw.bin bs=1k conv=notrunc seek=2k if=$SHELL_FOLDER/output/opensbi/fw_jump.bin
 # 写入 trusted_domain.bin,地址偏移量为 1K*4K = 0x400000，因此 trusted_domain.bin的地址偏移量为  0x400000
