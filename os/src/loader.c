@@ -1,4 +1,5 @@
 #include <timeros/loader.h>
+#include <timeros/task.h>
 #include <timeros/address.h>
 extern u64 _num_app[];
 /* _app_names: 由 build.c 生成的一组以 '\0' 结尾的应用名字符串, 顺序与 app_id 一致 */
@@ -95,42 +96,97 @@ void elf_check(elf64_ehdr_t *ehdr)
 }
 
 /* 解析 program header, 把各 PT_LOAD 段装载到 proc 页表, 并计算 ustack/base_size */
-void load_segment(elf64_ehdr_t *ehdr, struct TaskControlBlock* proc)
+int load_segment(elf64_ehdr_t *ehdr, ProcessControlBlock* proc)
 {
-    // Program Header 解析
     elf64_phdr_t *phdr;
-    //遍历每一个逻辑段
+    u64 max_end_va = 0;
+
+    // 遍历每个程序段描述符
+    for (size_t i = 0; i < ehdr->e_phnum; i++) {
+        // 得到当前程序段描述符在 ELF 文件中的地址
+        phdr = (elf64_phdr_t*)((u8*)ehdr + ehdr->e_phoff + (u64)ehdr->e_phentsize * i);
+        if (phdr->p_type != PT_LOAD)
+            continue;
+        u64 end = phdr->p_vaddr + phdr->p_memsz;
+        if (end < phdr->p_vaddr || phdr->p_filesz > phdr->p_memsz)
+            return -1;
+        if (end > max_end_va) max_end_va = end;
+    }
+
+    u64 stack_limit = THREAD_TRAPFRAME(MAX_THREADS - 1) - (2 * MAX_THREADS + 2) * PAGE_SIZE;
+    if (max_end_va > stack_limit - PAGE_SIZE)
+        return -1;
+
+    proc->base_size   = PGROUNDUP(max_end_va);
+    proc->ustack_base = proc->base_size;
+
+    // 遍历每个程序段描述符
     for (size_t i = 0; i < ehdr->e_phnum; i++)
     {
-        //拿到每个Program Header的指针
-        phdr = (elf64_phdr_t*)((u64)ehdr + ehdr->e_phoff + ehdr->e_phentsize * i);
-        if(phdr->p_type == PT_LOAD)
+        // 得到当前程序段描述符在 ELF 文件中的地址
+        phdr = (elf64_phdr_t*)((u8*)ehdr + ehdr->e_phoff + (u64)ehdr->e_phentsize * i);
+        if (phdr->p_type == PT_LOAD)
         {
-            // 获取映射内存段开始位置
-            u64 start_va = phdr->p_vaddr;
-            // 获取映射内存段结束位置
-            proc->ustack = start_va + phdr->p_memsz;
-            //  转换elf的可读，可写，可执行的 flags
+            // 在内核虚拟地址空间中加载的起始地址和结束地址
+            u64 segment_start = phdr->p_vaddr;
+            u64 segment_end   = segment_start + phdr->p_memsz;
+            u64 file_end      = segment_start + phdr->p_filesz;
+            if (phdr->p_memsz == 0)
+                continue;
+            
+            // 把 ELF 中的段权限 改为 页表权限
             u8 map_perm = PTE_U | flags_to_mmap_prot(phdr->p_flags);
-            // 获取映射内存大小,需要向上对齐
-            u64 map_size = PGROUNDUP(phdr->p_memsz);
-            for (size_t j = 0; j < map_size; j += PAGE_SIZE)
+            // 按页加载内存
+            u64 first_page = PGROUNDDOWN(segment_start);
+            u64 end_page   = PGROUNDUP(segment_end);
+            // 从宽范围页开始遍历映射（包括 .bss 页）
+            for (u64 page_va = first_page; page_va < end_page; page_va += PAGE_SIZE)
             {
-                // 分配物理内存，加载程序段，然后映射
-                PhysPageNum ppn = kalloc();
-                //获取到分配的物理内存的地址
-                u64 paddr = phys_addr_from_phys_page_num(ppn).value;
-                memcpy((void*)paddr, (void*)((u64)ehdr + phdr->p_offset + j), PAGE_SIZE);
-                //内存逻辑段内存映射
-                PageTable_map(&proc->pagetable, virt_addr_from_size_t(start_va + j), \
-                              phys_addr_from_size_t(paddr), PAGE_SIZE, map_perm);
+                PageTableEntry* pte = find_pte(&proc->pagetable,
+                                               floor_virts(virt_addr_from_size_t(page_va)));
+                u64 paddr;
+                 // 虚拟页还未映射物理页
+                if (pte == NULL)
+                {
+                    PhysPageNum ppn = kalloc(); // kalloc 已将新页清零
+                    if (!ppn.value) return -1;
+                    paddr = phys_addr_from_phys_page_num(ppn).value;
+                    if (PageTable_try_map(&proc->pagetable, page_va, paddr, map_perm) < 0) {
+                        kfree(ppn);
+                        return -1;
+                    }
+                }
+                // 虚拟页已经完成了映射
+                else
+                {
+                    assert(pte->bits & PTE_U);
+                    // #define PTE2PA(pte) (((pte) >> 10) << 12)
+                    paddr = PTE2PA(pte->bits);
+                    pte->bits |= map_perm;
+                }
+                // 当前映射页的结束地址
+                u64 page_end = page_va + PAGE_SIZE;
+                // 只 copy 页中有数据的地址（取当前页的起始地址与程序段起始地址中的较大值）
+                u64 copy_start = page_va > segment_start ? page_va : segment_start;
+                // 只 copy 页中有数据的地址（取当前页的结束地址与文件数据结束地址中的较小值）
+                u64 copy_end = page_end < file_end ? page_end : file_end;
+                
+                if (copy_start < copy_end)
+                    // (copy_start - page_va) ：数据在当前页面中的偏移
+                    memcpy((void*)(paddr + copy_start - page_va),
+                           (u8*)ehdr + phdr->p_offset + (copy_start - segment_start),
+                           copy_end - copy_start);
+
+                // 清除 .bss 区
+                u64 zero_start = page_va > file_end ? page_va : file_end;
+                u64 zero_end = page_end < segment_end ? page_end : segment_end;
+                if (zero_start < zero_end)
+                    memset((void*)(paddr + zero_start - page_va), 0, zero_end - zero_start);
             }
         }
     }
 
-    // 计算用户栈位置与应用数据总大小(base_size 供 fork/exit 释放页表使用)
-    proc->ustack = 2 * PAGE_SIZE + PGROUNDUP(proc->ustack);
-    proc->base_size = proc->ustack;
+    return 0;
 }
 
 void load_app(size_t app_id)
@@ -144,15 +200,14 @@ void load_app(size_t app_id)
     //校验 ELF 魔数与架构
     elf_check(ehdr);
 
-    //创建任务
-    TaskControlBlock* proc = task_create_pt(app_id);
+    // 创建进程及其用户页表
+    ProcessControlBlock* proc = allocproc();
+    if (!proc) panic("load_app: no process slot or memory");
 
     //加载程序段
-    load_segment(ehdr, proc);
+    if (load_segment(ehdr, proc) < 0) panic("load_app: invalid ELF or out of memory");
 
     //记录APP程序的入口地址，为 main 函数地址
     proc->entry = (u64)ehdr->e_entry;
 
-    // 映射应用程序用户栈开始地址
-    proc_ustack(proc);
 }

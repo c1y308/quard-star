@@ -1,11 +1,11 @@
 .section .text.trampoline
 .globl __alltraps
 .align 3
+
 __alltraps:
-    # 从sscratch获取S模式下的SP，把U模式下的SP保存到sscratch寄存器中
+    # sscratch holds this thread's TrapContext VA; exchange it with user SP.
     csrrw sp, sscratch, sp
-    # now sp->kernel stack, sscratch->user stack
-    # allocate a TrapContext on kernel stack
+    # now sp->TrapContext in user page table, sscratch->user stack
     # save general-purpose registers
     sd x1, 1*8(sp)
     # skip sp(x2), we will save it later
@@ -113,6 +113,5 @@ __restore:
     ld sp, 2*8(sp)
 
     sret
-
 
 

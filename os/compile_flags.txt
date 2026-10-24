@@ -1,0 +1,4 @@
+-Iinclude
+--target=riscv64-unknown-elf
+-fno-builtin
+-mcmodel=medany

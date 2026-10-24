@@ -1,10 +1,10 @@
 #ifndef TOS_ADDRESS_H
 #define TOS_ADDRESS_H
 
-#include <timeros/os.h>
+#include <timeros/types.h>
 
 #define PAGE_SIZE 0x1000      // 4kb  一页的大小
-#define PAGE_SIZE_BITS   0xc  // 12   页内偏移地址长度
+#define PAGE_SIZE_BITS   0xc  // 12   页内偏移地址长度(页号*PAGE_SIZE_BITS+页内偏移=虚拟地址)
 
 #define PA_WIDTH_SV39 56      //物理地址长度
 #define VA_WIDTH_SV39 39      //虚拟地址长度
@@ -30,8 +30,8 @@
 #define SATP_SV39 (8ULL << 60)
 #define MAKE_SATP(pagetable) (SATP_SV39 | (((u64)pagetable)))
 #define MAKE_PAGETABLE(satp) ( satp & (SATP_SV39 - 1) )
-//Trap页开始位置
-#define TRAPFRAME (TRAMPOLINE - PAGE_SIZE)
+// 每个线程的 TrapContext 虚拟地址
+#define THREAD_TRAPFRAME(tid) (TRAMPOLINE - ((u64)(tid) + 1) * PAGE_SIZE)
 
 
 #define PGROUNDUP(sz)  (((sz)+PAGE_SIZE-1) & ~(PAGE_SIZE-1))
@@ -91,10 +91,12 @@ void kvminithart();
 PhysPageNum kalloc(void);
 void kfree(PhysPageNum ppn);
 void PageTable_map(PageTable* pt,VirtAddr va, PhysAddr pa, u64 size ,uint8_t pteflgs);
+int PageTable_try_map(PageTable* pt, u64 va, u64 pa, uint8_t flags);
 
 VirtAddr virt_addr_from_size_t(uint64_t v);
 PhysAddr phys_addr_from_size_t(uint64_t v);
 PhysAddr phys_addr_from_phys_page_num(PhysPageNum ppn);
+PhysPageNum floor_phys(PhysAddr addr);
 VirtPageNum virt_page_num_from_virt_addr(VirtAddr virt_addr);
 VirtPageNum virt_page_num_from_size_t(uint64_t v);
 VirtPageNum floor_virts(VirtAddr virt_addr);

@@ -17,45 +17,39 @@ void set_user_trap_entry()
 
 void trap_handler()
 {
-	set_kernel_trap_entry();
-	TrapContext* cx = (TrapContext*)get_current_trap_cx();
-
+    set_kernel_trap_entry();
+    TrapContext* cx = (TrapContext*)get_current_trap_cx();
     reg_t scause = r_scause();
-	reg_t cause_code = scause & 0xfff;
-	if(scause & 0x8000000000000000)
-	{
-		switch (cause_code)
-		{
-		/* rtc 中断*/
-		case 5:
-			set_next_trigger();
-			schedule();
-			break;
-		default:
-			printk("undfined interrrupt scause:%x\n",scause);
-			break;
-		}
-	}
-	else
-	{
-		switch (cause_code)
-		{
-		/* U模式下的syscall */
-		case 8:
-			/* 必须先推进 sepc 再执行 syscall: exec 会把 sepc 覆写为新程序入口,
-			   若在其后 +=8 会把入口地址破坏掉(如 0x10000 -> 0x10008) */
-			cx->sepc += 8;
-			int result = __SYSCALL(cx->a7,cx->a0,cx->a1,cx->a2);
-			/* fork/wait 等可能切换当前进程, 重新获取 trap 上下文再写返回值 */
-			cx = (TrapContext*)get_current_trap_cx();
-			cx->a0 = result;
-			break;
-		default:
-			printk("undfined exception scause:%x\n",scause);
-			break;
-		}
-	}
-	trap_return();
+    reg_t cause_code = scause & 0xfff;
+
+    if (scause & 0x8000000000000000ULL) {
+        switch (cause_code) {
+        case 5:
+            set_next_trigger();
+            schedule();
+            break;
+        default:
+            printk("undefined interrupt scause:%lx\n", scause);
+            panic("unexpected user interrupt");
+        }
+    } else {
+        switch (cause_code) {
+        case 8: {
+            /* exec 会覆写 sepc，必须先跳过 4 字节的 ecall 指令。 */
+            cx->sepc += 4;
+            uint64_t result = __SYSCALL(cx->a7, cx->a0, cx->a1, cx->a2);
+            /* 调度可能切换当前进程，返回值写入当前 trap 上下文。 */
+            cx = (TrapContext*)get_current_trap_cx();
+            cx->a0 = result;
+            break;
+        }
+        default:
+            printk("undefined exception scause:%lx sepc:%lx stval:%lx\n",
+                   scause, cx->sepc, r_stval());
+            panic("unexpected user exception");
+        }
+    }
+    trap_return();
 }
 
 void trap_return()  
@@ -63,9 +57,9 @@ void trap_return()
     /* 把 stvec 设置为内核和应用地址空间共享的跳板页面的起始地址 */  
     set_user_trap_entry();
     /* Trap 上下文在应用地址空间中的虚拟地址 */  
-    u64 trap_cx_ptr = TRAPFRAME;  
+    u64 trap_cx_ptr = current_thread()->trap_cx_va;
     /* 要继续执行的应用地址空间的 token */  
-    u64  user_satp = current_user_token();  
+    u64  user_satp = current_thread_user_token();
 	/* 计算_restore函数的虚拟地址 */
     u64  restore_va = (u64)__restore - (u64)__alltraps + TRAMPOLINE;  
 	asm volatile (    
@@ -81,6 +75,3 @@ void trap_return()
 		);
   
 }
-
-
-

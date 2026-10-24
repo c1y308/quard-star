@@ -8,7 +8,7 @@ SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 export PATH=$SHELL_FOLDER/../toolchain/bin:$PATH
 
 if ! command -v dtc >/dev/null 2>&1; then
-    echo "缺少 dtc（device-tree-compiler），无法生成 quard_star_sbi.dtb" >&2
+    echo "缺少 dtc(device-tree-compiler),无法生成 quard_star_sbi.dtb" >&2
     exit 1
 fi
 

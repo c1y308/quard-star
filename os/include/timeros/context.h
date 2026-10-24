@@ -1,7 +1,7 @@
 #ifndef TOS_CONTEXT_H__
 #define TOS_CONTEXT_H__
 
-#include "os.h"
+#include <timeros/types.h>
 
 /*S模式的trap上下文*/
 typedef struct TrapContext {

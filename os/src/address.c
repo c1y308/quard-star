@@ -169,7 +169,8 @@ PhysPageNum StackFrameAllocator_alloc(StackFrameAllocator *allocator) {
     }
     /* 清空此页内存 ： 注意不能覆盖内核代码区，分配的内存只能是未使用部分*/
     PhysAddr addr = phys_addr_from_phys_page_num(ppn);
-    memset((void*)addr.value,0,PAGE_SIZE);
+    if (ppn.value != 0)
+        memset((void*)addr.value,0,PAGE_SIZE);
     return ppn;
 }
 
@@ -317,6 +318,50 @@ void PageTable_map(PageTable* pt,VirtAddr va, PhysAddr pa, u64 size ,uint8_t pte
     }
 }
 
+/* 可失败的单页映射；失败时回滚本次创建的页表层级。 */
+int PageTable_try_map(PageTable* pt, u64 va, u64 pa, uint8_t flags)
+{
+    if (!pt->root_ppn.value || !pa || va >= MAXVA || (va & (PAGE_SIZE - 1)) ||
+        (pa & (PAGE_SIZE - 1)))
+        return -1;
+    size_t idx[3];
+    indexes(floor_virts(virt_addr_from_size_t(va)), idx);
+    PhysPageNum ppn = pt->root_ppn;
+    PageTableEntry *created[2] = {0, 0};
+    PhysPageNum pages[2];
+    for (int level = 0; level < 2; level++) {
+        PageTableEntry *pte = &get_pte_array(ppn)[idx[level]];
+        if (!PageTableEntry_is_valid(pte)) {
+            PhysPageNum child = kalloc();
+            if (!child.value) {
+                for (int j = level - 1; j >= 0; j--) {
+                    if (created[j]) {
+                        *created[j] = PageTableEntry_empty();
+                        kfree(pages[j]);
+                    }
+                }
+                return -1;
+            }
+            *pte = PageTableEntry_new(child, PTE_V);
+            created[level] = pte;
+            pages[level] = child;
+        }
+        ppn = PageTableEntry_ppn(pte);
+    }
+    PageTableEntry *leaf = &get_pte_array(ppn)[idx[2]];
+    if (PageTableEntry_is_valid(leaf)) {
+        for (int j = 1; j >= 0; j--) {
+            if (created[j]) {
+                *created[j] = PageTableEntry_empty();
+                kfree(pages[j]);
+            }
+        }
+        return -1;
+    }
+    *leaf = PageTableEntry_new(floor_phys(phys_addr_from_size_t(pa)), PTE_V | flags);
+    return 0;
+}
+
 /* 取消映射的函数先不管 */
 void PageTable_unmap(PageTable* pt, VirtPageNum vpn)
 {
@@ -334,7 +379,7 @@ int uvmcopy(PageTable* old, PageTable* new, u64 sz)
     u64 i;
     u8 flags;
 
-    for (i = 0; i <= sz; i+=PAGE_SIZE)
+    for (i = 0; i < sz; i+=PAGE_SIZE)
     {
         VirtPageNum vpn = floor_virts(virt_addr_from_size_t(i));
         pte = find_pte(old,vpn);
@@ -347,13 +392,16 @@ int uvmcopy(PageTable* old, PageTable* new, u64 sz)
             flags = PTE_FLAGS(pte->bits);
             /* 分配一页内存 */
             PhysPageNum ppn = kalloc();
+            if (!ppn.value) return -1;
             u64 paddr = phys_addr_from_phys_page_num(ppn).value;
             /* 拷贝内存 */
             memcpy((void*)paddr,(void*)phyaddr,PAGE_SIZE);
 
             /* 映射内存 */
-            PageTable_map(new,virt_addr_from_size_t(i), \
-                              phys_addr_from_size_t(paddr),PAGE_SIZE,flags);
+            if (PageTable_try_map(new, i, paddr, flags & ~PTE_V) < 0) {
+                kfree(ppn);
+                return -1;
+            }
         }
     }
     return 0;
@@ -409,11 +457,10 @@ void uvmfree(PageTable* pt , u64 sz)
     freewalk(pt->root_ppn);
 }
 
-/* 释放进程页表: 先解除跳板页/trap 页映射(不释放物理页, 二者为共享内核页), 再释放用户内存与页表本身 */
+/* 线程私有映射由线程资源回收负责；这里只回收共享 ELF 页和页表。 */
 void proc_freepagetable(PageTable* pagetable, u64 sz)
 {
   uvmunmap(pagetable, floor_virts(virt_addr_from_size_t(TRAMPOLINE)), 1, 0);
-  uvmunmap(pagetable, floor_virts(virt_addr_from_size_t(TRAPFRAME)), 1, 0);
   uvmfree(pagetable, sz);
 }
 
@@ -436,9 +483,6 @@ PageTable kvmmake(void)
     PageTable_map(&pt, virt_addr_from_size_t(TRAMPOLINE), phys_addr_from_size_t((u64)trampoline), \
                     PAGE_SIZE, PTE_R | PTE_X );
 
-    //allocate and map a kernel stack for each process.
-    proc_mapstacks(&pt);
-    
     return pt;
 }
 
@@ -459,9 +503,6 @@ void kvminithart()
   sfence_vma();
   reg_t satp = r_satp();
 }
-
-
-
 
 
 

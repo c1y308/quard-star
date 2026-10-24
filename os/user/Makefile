@@ -9,7 +9,19 @@ INCLUDE:=-I../include
 LIB = ../lib
 BIN_DIR = bin
 
-all: $(BIN_DIR) initproc xec user_shell time
+all: $(BIN_DIR) initproc xec user_shell time thread_test thread_main_exit thread_capacity_test thread_process_exit
+
+thread_process_exit: thread_process_exit.c $(LIB)/*.c
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld $^ -o bin/thread_process_exit
+
+thread_capacity_test: thread_capacity_test.c $(LIB)/*.c
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld $^ -o bin/thread_capacity_test
+
+thread_test: thread_test.c $(LIB)/*.c
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld $^ -o bin/thread_test
+
+thread_main_exit: thread_main_exit.c $(LIB)/*.c
+	${CC} ${CFLAGS} $(INCLUDE) -T user.ld $^ -o bin/thread_main_exit
 
 # 创建bin目录的规则
 $(BIN_DIR):

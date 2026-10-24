@@ -4,7 +4,7 @@
 
 char * translated_byte_buffer(const char* data , size_t len)
 {
-    u64  user_satp = current_user_token();  
+    u64  user_satp = current_thread_user_token();
     PageTable  pt ;
     pt.root_ppn.value = MAKE_PAGETABLE(user_satp);
 
@@ -88,25 +88,37 @@ uint64_t __SYSCALL(size_t syscall_id, reg_t arg1, reg_t arg2, reg_t arg3) {
         
         case __NR_write:
             __sys_write(arg1, (const char*)arg2, arg3);
-            break;
+            return arg3;
         case __NR_read:
             __sys_read(arg1, (const char*)arg2, arg3);
+            return arg3;
         case __NR_sched_yield:
             __sys_yield();
-            break;
+            return 0;
         case __NR_gettimeofday:
             return __sys_gettime();
         case __NR_exit:
             __sys_exit(arg1);
-            break;
+            return 0;
         case __NR_clone:
             return __sys_fork();
         case __NR_execve:
             return __sys_exec((const char*)arg2);
         case __NR_waitid:
             return __sys_wait();
+        case __NR_getpid:
+            return current_proc()->pid;
+        case __NR_thread_create:
+            return thread_create(arg1, arg2, arg3);
+        case __NR_gettid:
+            return current_thread()->tid;
+        case __NR_waittid:
+            return waittid(arg1);
+        case __NR_thread_exit:
+            thread_exit((int)arg1);
+            return 0;
         default:
             printk("Unsupported syscall id:%d\n",syscall_id);
-            break;
+            return (uint64_t)-1;
         }
 }

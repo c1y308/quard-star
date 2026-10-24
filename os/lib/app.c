@@ -64,3 +64,25 @@ int sys_exit(u64 exit_code)
 {
     return syscall(__NR_exit,exit_code,0,0);
 }
+
+/* ra of a newly created user thread points here. The entry return value is a0. */
+static void thread_return_stub(u64 code)
+{
+    sys_thread_exit((int)code);
+    for (;;) sys_yield();
+}
+
+int sys_thread_create(int (*entry)(u64), u64 arg)
+{
+    return (int)syscall(__NR_thread_create, (reg_t)entry, arg,
+                        (reg_t)thread_return_stub);
+}
+
+int sys_gettid(void) { return (int)syscall(__NR_gettid, 0, 0, 0); }
+int sys_getpid(void) { return (int)syscall(__NR_getpid, 0, 0, 0); }
+int sys_waittid(int tid) { return (int)syscall(__NR_waittid, tid, 0, 0); }
+void sys_thread_exit(int code)
+{
+    syscall(__NR_thread_exit, code, 0, 0);
+    for (;;) sys_yield();
+}

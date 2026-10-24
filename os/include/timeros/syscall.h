@@ -12,6 +12,11 @@ uint64_t __SYSCALL(size_t syscall_id, reg_t arg1, reg_t arg2, reg_t arg3);
 #define __NR_waitid 95
 #define __NR_clone 220
 #define __NR_execve 221
+#define __NR_getpid 172
+#define __NR_thread_create 1000
+#define __NR_gettid 1001
+#define __NR_waittid 1002
+#define __NR_thread_exit 1003
 
 
 
@@ -24,3 +29,8 @@ int sys_fork();
 int sys_exec(char* name);
 int sys_waitpid();
 int sys_exit(u64 exit_code);
+int sys_thread_create(int (*entry)(u64), u64 arg);
+int sys_gettid(void);
+int sys_getpid(void);
+int sys_waittid(int tid);
+void sys_thread_exit(int code);

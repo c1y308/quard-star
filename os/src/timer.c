@@ -19,9 +19,7 @@ void timer_init()
    reg_t sie = r_sie();
    sie |= SIE_STIE;
    w_sie(sie);
-   reg_t sstatus =r_sstatus();
-   sstatus |= (1L << 1) ;
-   w_sstatus(sstatus);
+   /* SIE 在 sret 时由线程 TrapContext 的 SPIE 恢复；启动阶段保持关闭。 */
 }
 
 

@@ -7,7 +7,7 @@ MEMORY
 }
 SECTIONS
 {
-    skernel = .;   /* 定义内核起始内存地址 */
+    skernel = ORIGIN(ram);    /* 定义内核起始内存地址 */
 	.text : {
         *(.text.entry)
         . = ALIGN(4K);

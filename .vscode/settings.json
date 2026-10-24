@@ -1,4 +1,7 @@
 {
+    "clangd.path": "/home/c1y308/quard-star/.tools/clangd-14/clangd",
+    "clangd.useScriptAsExecutable": true,
+    "C_Cpp.intelliSenseEngine": "disabled",
     "files.associations": {
         "os.h": "c",
         "address.h": "c",

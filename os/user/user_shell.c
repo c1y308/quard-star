@@ -12,6 +12,7 @@ int main()
     printf("Timer os user shell\n");
     printf(">> ");
     char line[BUFFER_SIZE];
+    line[0] = '\0';
     while (1)
     {
         char c = getchar();

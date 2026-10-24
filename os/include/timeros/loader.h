@@ -1,6 +1,8 @@
 #ifndef TOS_LOADER_H__
 #define TOS_LOADER_H__
 
+typedef struct ProcessControlBlock ProcessControlBlock;
+
 #include <timeros/types.h>
 #include <timeros/assert.h>
 #include <timeros/stdio.h>
@@ -75,7 +77,6 @@ void get_app_names();
 /* 校验 ELF 魔数与架构 */
 void elf_check(elf64_ehdr_t *ehdr);
 /* 解析 program header 并装载各 PT_LOAD 段到 proc 页表, 计算 ustack/base_size */
-struct TaskControlBlock;
-void load_segment(elf64_ehdr_t *ehdr, struct TaskControlBlock* proc);
+int load_segment(elf64_ehdr_t *ehdr, ProcessControlBlock* proc);
 
 #endif
