@@ -301,8 +301,14 @@ int exec(const char *name)
     p->entry = ehdr->e_entry;
     t->ustack = new_stack + PAGE_SIZE;
     TrapContext *cx = (TrapContext *)t->trap_cx_paddr;
+    /* 复用 trap 上下文物理页，但不要把旧程序的寄存器带入新程序。 */
+    memset(cx, 0, sizeof(*cx));
+    cx->sstatus = (r_sstatus() & ~SSTATUS_SPP) | SSTATUS_SPIE;
     cx->sepc = p->entry;
     cx->sp = t->ustack;
+    cx->kernel_satp = kernel_satp;
+    cx->kernel_sp = t->kstack;
+    cx->trap_handler = (u64)trap_handler;
     uvmunmap(&old_pt, floor_virts(virt_addr_from_size_t(old_stack)), 1, 1);
     uvmunmap(&old_pt, floor_virts(virt_addr_from_size_t(t->trap_cx_va)), 1, 0);
     proc_freepagetable(&old_pt, old_size);
