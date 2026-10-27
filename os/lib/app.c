@@ -18,6 +18,16 @@ uint64_t sys_write(size_t fd, const char* buf, size_t len)
     return syscall(__NR_write,fd,(reg_t)buf, len);
 }
 
+int sys_open(const char *name, unsigned flags)
+{
+    return (int)syscall(__NR_open, (reg_t)name, flags, 0);
+}
+
+int sys_close(int fd)
+{
+    return (int)syscall(__NR_close, fd, 0, 0);
+}
+
 uint64_t sys_yield()
 {
     return syscall(__NR_sched_yield,0,0,0);

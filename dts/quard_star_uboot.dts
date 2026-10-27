@@ -211,7 +211,7 @@
 		};
 
 		uart1: uart1@10001000 {
-			interrupts = <0xa>;
+			interrupts = <0xb>;
 			interrupt-parent = <0x11>;
 			clock-frequency = <0x384000>;
 			reg = <0x0 0x10001000 0x0 0x1000>;

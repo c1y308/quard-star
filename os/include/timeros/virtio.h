@@ -108,5 +108,6 @@ void virtio_disk_init();
 
 // 磁盘读写
 void virtio_disk_rw(struct buf *, int );
+void virtio_disk_intr(void);
 
 #endif

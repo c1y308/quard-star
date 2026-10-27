@@ -8,6 +8,8 @@
 /* 最大任务数, 由 task.c 移至此处, 便于 loader.c 等模块共享 */
 #define MAX_TASKS 10
 #define MAX_THREADS 32
+#define MAX_FD 32
+typedef struct OpenFile OpenFile;
 
 typedef enum TaskState
 {
@@ -30,6 +32,7 @@ typedef struct ProcessControlBlock
     bool used;
     bool zombie;
     bool tid_used[MAX_THREADS];
+    OpenFile *fds[MAX_FD];
 } ProcessControlBlock;
 
 typedef struct TaskControlBlock
@@ -47,7 +50,7 @@ typedef struct TaskControlBlock
 } TaskControlBlock;
 
 /* 初始化应用程序 */
-void app_init(size_t app_id);
+void app_init(void);
 /* 获取当前执行应用程序trap上下文地址 */
 u64 get_current_trap_cx();
 /*返回当前执行的应用程序的satp token*/

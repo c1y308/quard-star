@@ -1,0 +1,11 @@
+CompileFlags:
+  # Meson builds QEMU in the workspace-level qemu-build directory.
+  CompilationDatabase: ../../qemu-build
+  # GCC emits this option, but the workspace's clangd 14 does not accept it.
+  Remove: [-fzero-call-used-regs=*]
+---
+If:
+  PathMatch: include/hw/riscv/quard_star\.h
+CompileFlags:
+  # This board header normally inherits these prerequisites from its C file.
+  Add: [-include, qemu/osdep.h, -include, hw/core/boards.h]

@@ -479,6 +479,13 @@ PageTable kvmmake(void)
     // map kernel data and the physical RAM we'll make use of. 
     PageTable_map(&pt,virt_addr_from_size_t((u64)etext),phys_addr_from_size_t((u64)etext ), \
                     PHYSTOP - (u64)etext , PTE_R | PTE_W ) ;
+    // easy-fs accesses virtio after paging is enabled (exec and file syscalls).
+    PageTable_map(&pt, virt_addr_from_size_t(VIRTIO0), phys_addr_from_size_t(VIRTIO0),
+                    PAGE_SIZE, PTE_R | PTE_W);
+    PageTable_map(&pt, virt_addr_from_size_t(PLIC_BASE), phys_addr_from_size_t(PLIC_BASE),
+                    PLIC_SIZE, PTE_R | PTE_W);
+    PageTable_map(&pt, virt_addr_from_size_t(UART0_BASE), phys_addr_from_size_t(UART0_BASE),
+                    PAGE_SIZE, PTE_R | PTE_W);
     // map the trampoline for trap entry/exit to the highest virtual address in the kernel.
     PageTable_map(&pt, virt_addr_from_size_t(TRAMPOLINE), phys_addr_from_size_t((u64)trampoline), \
                     PAGE_SIZE, PTE_R | PTE_X );
@@ -503,6 +510,4 @@ void kvminithart()
   sfence_vma();
   reg_t satp = r_satp();
 }
-
-
 

@@ -85,10 +85,8 @@ if [ ! -d "$SHELL_FOLDER/output/os" ]; then
 mkdir $SHELL_FOLDER/output/os
 fi
 cd $SHELL_FOLDER/os
-# 编译app加载模块
-make build_app
-./build.out
-# 编译os
+# 编译用户程序、easy-fs 镜像和内核
+make compile-commands
 make
 cp $SHELL_FOLDER/os/os.bin $SHELL_FOLDER/output/os/os.bin
 make clean
@@ -119,11 +117,4 @@ dd of=fw.bin bs=1k conv=notrunc seek=4K if=$SHELL_FOLDER/output/trusted_domain/t
 dd of=fw.bin bs=1k conv=notrunc seek=8K if=$SHELL_FOLDER/output/os/os.bin
 
 
-# 生成64M空的磁盘文件, 供 run.sh 的 virtio-blk-device 使用
-echo "------------------------- 生成磁盘文件 ----------------------------"
-if [ ! -d "$SHELL_FOLDER/output/disk" ]; then  
-mkdir $SHELL_FOLDER/output/disk
-fi 
-dd if=/dev/urandom of=$SHELL_FOLDER/output/disk/disk.img bs=64M count=1
-
-
+# os/Makefile creates or updates output/disk/fs.img without replacing user files.

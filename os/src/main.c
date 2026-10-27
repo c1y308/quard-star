@@ -2,6 +2,7 @@
 
 void os_main()
 {
+   intr_off();
    printk("hello timer os!\n");
 
    // 内存分配器初始化
@@ -12,25 +13,23 @@ void os_main()
 
    //初始化磁盘
    virtio_disk_init();
+   binit();
 
    //初始化进程控制块
    procinit();
 
-   //加载 initproc 进程(app_0)
-   load_app(0);
-   app_init(0);
    //映射内核
    kvminithart();
 
    //trap初始化
    set_kernel_trap_entry();
-
-   //解析并打印所有应用的名字
-   get_app_names();
-   
-
-
    timer_init();
+   device_init();
+
+   // 设备中断就绪后再执行磁盘 I/O。
+   fs_init();
+   load_initproc();
+   app_init();
 
    run_first_task();
 

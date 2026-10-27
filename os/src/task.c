@@ -45,9 +45,10 @@ ProcessControlBlock *allocproc(void)
         if (p->used) continue;
         memset(p, 0, sizeof(*p));
         if (new_pagetable(&p->pagetable) < 0) return 0;
-        p->pid = nextpid++;
-        p->used = true;
-        return p;
+    p->pid = nextpid++;
+    p->used = true;
+    fs_fd_init(p);
+    return p;
     }
     return 0;
 }
@@ -149,9 +150,9 @@ fail:
     return 0;
 }
 
-void app_init(size_t app_id)
+void app_init(void)
 {
-    ProcessControlBlock *p = &processes[app_id];
+    ProcessControlBlock *p = &processes[0];
     if (!p->used || !make_thread(p, p->entry, 0, 0)) panic("app_init: no thread");
 }
 
@@ -223,6 +224,7 @@ void freeproc(ProcessControlBlock *p)
     if (!p || !p->used || p == current_proc()) panic("freeproc: active");
     for (int i = 0; i < MAX_THREADS; i++)
         if (tasks[i].process == p) reap_thread(&tasks[i]);
+    fs_fd_close_all(p);
     proc_freepagetable(&p->pagetable, p->base_size);
     memset(p, 0, sizeof(*p));
 }
@@ -260,6 +262,7 @@ int __sys_fork(void)
     ((TrapContext *)newt->trap_cx_paddr)->a0 = 0;
     ((TrapContext *)newt->trap_cx_paddr)->kernel_sp = newt->kstack;
     child->parent = parent;
+    fs_fd_clone(child, parent);
     return child->pid;
 }
 
@@ -268,14 +271,13 @@ int exec(const char *name)
     ProcessControlBlock *p = current_proc();
     TaskControlBlock *t = current_thread();
     if (!sole_main_thread(p)) return -1;
-    AppMetadata metadata = get_app_data_by_name((char *)name);
-    if (metadata.id < 0) return -1;
-    elf64_ehdr_t *ehdr = (elf64_ehdr_t *)metadata.start;
-    elf_check(ehdr);
+    efs_u32 inode;
+    if (efs_lookup(fs_instance(), name, &inode) < 0) return -1;
     ProcessControlBlock staged = *p;
     if (new_pagetable(&staged.pagetable) < 0) return -1;
     staged.base_size = 0;
-    if (load_segment(ehdr, &staged) < 0) {
+    u64 entry;
+    if (load_elf(inode, &staged, &entry) < 0) {
         proc_freepagetable(&staged.pagetable, staged.base_size);
         return -1;
     }
@@ -298,7 +300,7 @@ int exec(const char *name)
     p->pagetable = staged.pagetable;
     p->base_size = staged.base_size;
     p->ustack_base = staged.ustack_base;
-    p->entry = ehdr->e_entry;
+    p->entry = entry;
     t->ustack = new_stack + PAGE_SIZE;
     TrapContext *cx = (TrapContext *)t->trap_cx_paddr;
     /* 复用 trap 上下文物理页，但不要把旧程序的寄存器带入新程序。 */
@@ -325,6 +327,7 @@ int thread_create(u64 entry, u64 arg, u64 return_stub)
 
 static void process_became_zombie(ProcessControlBlock *p, int code)
 {
+    fs_fd_close_all(p);
     p->zombie = true;
     p->exit_code = code;
     children_proc_clear(p);

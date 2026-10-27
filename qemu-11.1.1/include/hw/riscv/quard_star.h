@@ -48,7 +48,7 @@ enum {
 
 #define QUARD_STAR_PLIC_NUM_SOURCES    127      //PLIC 支持的中断源的最大数量
 #define QUARD_STAR_PLIC_NUM_PRIORITIES 7        //PLIC 支持的中断优先级的数量
-#define QUARD_STAR_PLIC_PRIORITY_BASE  0x04     //PLIC 中断优先级寄存器的基址偏移值，用于访问中断优先级信息
+#define QUARD_STAR_PLIC_PRIORITY_BASE  0x00     // ID 0 保留，ID n 的优先级位于基址 + 4*n
 #define QUARD_STAR_PLIC_PENDING_BASE   0x1000   //PLIC 中断挂起寄存器的基址偏移值，用于访问中断挂起状态
 #define QUARD_STAR_PLIC_ENABLE_BASE    0x2000   //PLIC 中断使能寄存器的基址偏移值，用于控制中断使能状态
 #define QUARD_STAR_PLIC_ENABLE_STRIDE  0x80     //PLIC 中断使能寄存器之间的地址间隔

@@ -1,13 +1,26 @@
 #include <timeros/os.h>
 
-void trap_from_kernel()
+void trap_from_kernel(void)
 {
-	panic("a trap from kernel!\n");
+    reg_t scause = r_scause();
+    if (scause & (1UL << 63)) {
+        switch (scause & 0xfff) {
+        case 5:
+            set_next_trigger();
+            return;
+        case 9:
+            irq_handler();
+            return;
+        }
+    }
+    printk("unexpected kernel trap scause:%lx sepc:%lx stval:%lx\n",
+           scause, r_sepc(), r_stval());
+    panic("unexpected kernel trap");
 }
 
 void set_kernel_trap_entry()
 {
-	w_stvec((reg_t)trap_from_kernel);
+	w_stvec((reg_t)kernel_trap_entry);
 }
 
 void set_user_trap_entry()
@@ -27,6 +40,9 @@ void trap_handler()
         case 5:
             set_next_trigger();
             schedule();
+            break;
+        case 9:
+            irq_handler();
             break;
         default:
             printk("undefined interrupt scause:%lx\n", scause);

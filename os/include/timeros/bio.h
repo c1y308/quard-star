@@ -3,7 +3,7 @@
 
 #define MAXOPBLOCKS 10 // max # of blocks any FS op writes
 #define NBUF (MAXOPBLOCKS * 3) // size of disk block cache
-#define BSIZE 1024 // block size
+#define BSIZE 512 // easy-fs block size and virtio sector size
 
 // 缓存块
 struct buf {

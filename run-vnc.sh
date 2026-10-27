@@ -48,7 +48,7 @@ $SHELL_FOLDER/output/qemu/bin/qemu-system-riscv64 \
 -smp 8 \
 -bios none \
 -drive if=pflash,bus=0,unit=0,format=raw,file=$FW_IMAGE \
--drive file=$SHELL_FOLDER/output/disk/disk.img,if=none,format=raw,id=x0 \
+-drive file=$SHELL_FOLDER/output/disk/fs.img,if=none,format=raw,id=x0 \
 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 \
 -vnc $VNC_DISPLAY \
 -serial vc:$DEFAULT_VC \

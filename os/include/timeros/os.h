@@ -18,12 +18,15 @@
 #include <timeros/task.h>
 #include <timeros/virtio.h>
 #include <timeros/bio.h>
+#include <timeros/fs.h>
+#include <timeros/irq.h>
 
 /* trap.c */
 extern void trap_init();
 extern void trap_handler();
 extern void trap_return();
 extern void set_kernel_trap_entry();
+extern void kernel_trap_entry(void);
 /* kerneltrap.S*/
 extern void __alltraps(void);
 extern void __restore(TrapContext *next);

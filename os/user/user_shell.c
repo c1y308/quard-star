@@ -27,7 +27,10 @@ int main()
                 printf("pid:%d\n",pid);
                 if(pid==0)
                 {
-                    sys_exec(line);
+                    if (sys_exec(line) < 0) {
+                        printf("unknown program: %s\n", line);
+                        sys_exit(127);
+                    }
                 } else if(pid > 0){
                     /* sys_waitpid 声明为无参(内核 wait() 忽略 pid),
                        GCC16 默认 C23 下 `()` 即 (void), 不能传参 */

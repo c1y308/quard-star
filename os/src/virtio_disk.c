@@ -85,6 +85,7 @@ void virtio_disk_init(){
     if (max < NUM)
         panic("virtio disk max queue too short");
     *VTMO_REG(VIRTIO_MMIO_QUEUE_NUM) = NUM;
+    *VTMO_REG(VIRTIO_MMIO_QUEUE_ALIGN) = PAGE_SIZE;
 
     // desc = pages -- num * virtq_desc
 	// avail = pages + 0x40 -- 2 * uint16, then num * uint16
@@ -94,6 +95,7 @@ void virtio_disk_init(){
 	disk.avail = (struct virtq_avail *)(disk.pages +
 					    NUM * sizeof(struct virtq_desc));
 	disk.used = (struct virtq_used *)(disk.pages + PAGE_SIZE);
+	*VTMO_REG(VIRTIO_MMIO_QUEUE_PFN) = (u32)((u64)disk.pages / PAGE_SIZE);
 
 	// all NUM descriptors start out unused.
 	for (int i = 0; i < NUM; i++)
@@ -162,20 +164,14 @@ static int alloc3_desc(int *idx)
 	return 0;
 }
 
-extern int PID;
-
 void virtio_disk_rw(struct buf *b, int write)
 {
-    u64 sector = b->blockno * (BSIZE / 512);
+    u64 sector = b->blockno;
 
     int idx[3];
-    while (1)
-    {
-        if(alloc3_desc(idx) == 0){
-            break;
-        }
-        schedule();
-    }
+    reg_t old_status = r_sstatus();
+    intr_off();
+    if (alloc3_desc(idx) < 0) panic("virtio disk: no descriptors");
     //初始化请求头，使用disk的ops域存储，ops存储位置和第一个描述符的位置一致
     struct virtio_blk_req *buf0 = &disk.ops[idx[0]];
     
@@ -226,16 +222,20 @@ void virtio_disk_rw(struct buf *b, int write)
 
     *VTMO_REG(VIRTIO_MMIO_QUEUE_NOTIFY) = 0; // value is queue number
 
-    struct buf volatile *_b = b;
+    /* The IRQ handler consumes the used ring and clears b->disk. Keep this
+       request serialized while permitting device and timer interrupts. */
     intr_on();
-    while (_b->disk == 1) {
-        //等待qemu的后端驱动处理完毕通过中断通知内核
-		// WARN: No kernel concurrent support, DO NOT allow kernel yield
-		// yield();
-	}
-	intr_off();
+    while (b->disk) {
+        __sync_synchronize();
+        asm volatile("wfi" ::: "memory");
+    }
+    intr_off();
+    __sync_synchronize();
+    if (disk.info[idx[0]].status != 0)
+        panic("virtio disk request failed");
 	disk.info[idx[0]].b = 0;
 	free_chain(idx[0]);
+    w_sstatus(old_status);
 }
 
 // 中断处理函数
@@ -250,7 +250,7 @@ void virtio_disk_intr()
 		__sync_synchronize();
 		int id = disk.used->ring[disk.used_idx % NUM].id;
 
-		if (disk.info[id].status != 0)
+		if (id >= NUM || !disk.info[id].b || disk.info[id].status != 0)
 			panic("virtio_disk_intr status");
 
 		struct buf *b = disk.info[id].b;

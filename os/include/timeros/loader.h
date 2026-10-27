@@ -8,13 +8,6 @@ typedef struct ProcessControlBlock ProcessControlBlock;
 #include <timeros/stdio.h>
 
 
-// 假设这个结构用于存储应用程序元数据
-typedef struct {
-    uint64_t start;
-    uint64_t size;
-    int id;      // app id; get_app_data_by_name 未找到时置 -1, 供 exec 判定
-} AppMetadata;
-
 #define EI_NIDENT 16
 //所有的ASCII码都可以用“\”加数字（一般是8进制数字）来表示。
 #define ELFMAG 0x464C457FU   // 0x464C457FU  "\177ELF"
@@ -67,16 +60,8 @@ typedef struct {
     u64 p_memsz;
     u64 p_align;
 } elf64_phdr_t;
-// 获取加载的app数量
-size_t get_num_app();
-AppMetadata  get_app_data(size_t app_id);
-/* 按名字查找 app 元数据(exec 使用), 未找到时 id==-1 */
-AppMetadata  get_app_data_by_name(char* path);
-void load_app(size_t app_id);
-void get_app_names();
-/* 校验 ELF 魔数与架构 */
-void elf_check(elf64_ehdr_t *ehdr);
-/* 解析 program header 并装载各 PT_LOAD 段到 proc 页表, 计算 ustack/base_size */
-int load_segment(elf64_ehdr_t *ehdr, ProcessControlBlock* proc);
+/* Load ELF from the root easy-fs inode into a new process address space. */
+int load_elf(unsigned inode, ProcessControlBlock *proc, u64 *entry);
+void load_initproc(void);
 
 #endif
